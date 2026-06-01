@@ -130,7 +130,8 @@
 \begin{acronym}[FOUR]\itemsep=-5pt
     \acro{FSO}{Free space optics}
     \acro{RF}{Radio frequency}
-    \acro{ISM}{Industrial, Scientific, Medical}
+    \acro{ISM}{Industrial, Scientific, Medical Band - Free to use}
+    \acro{DDM}{Digital Diagnostic Monitoring}
 \end{acronym}
 % ============= End Acronyms ==================
 
@@ -139,14 +140,14 @@
 
 \chapter{Introduction}
 % This chapter sets the stage, explaining why your project matters and what you intend to achieve.
-In a time of rapid global digitalization and great increase of need to process data, demand for high throughput and reliable communication systems keep growing.
+In a time of rapid global digitalization and great increase of need to process data, demand for high throughput and reliable communication systems keeps growing.
 With the expand of data rates, the need for security also rises. 
-Classic RF systems, although widely used, might not satisfy needs of all customers, due to high traffic on unlicensed (ISM) bands and possible unauthorized listening.
+Classic \ac{RF} systems, although widely used, might not satisfy needs of all customers, due to high traffic on unlicensed \ac{ISM} bands and possible unauthorized listening.
 
-Free Space Optical (FSO) communication might meet the requirments that RF lacks and collect the most demanding users. 
-Using precisly focused light beam, this solution not only exceeds RF solutions throughput, but also provides great security, by high directivity and difficulty of hijacking the signal.
+\ac{FSO} communication might meet the requirments that RF lacks and collect the most demanding users. 
+Using precisly focused light beam, this solution not only exceeds RF solutions in terms of throughput, but also provides great security, by high directivity and difficulty of hijacking the signal.
 
-Those characteristics make the FSO systems highly competitive answer for need of private high throughput connections.
+Those characteristics makes the FSO systems highly competitive answer for need of private high throughput connections.
 \section{Background}
 % Brief introduction to Free Space Optical (FSO) communication and its advantages (high speed, license-free).
 %Free space optical communication bases on transmitting data through the air using light source, typically a laser, which is detected on the other end by the photodiode.
@@ -162,22 +163,30 @@ That's why modern FSO systems are required to run advanced tracking and compensa
 
 
 \section{Motivation}
-%The challenge of alignment and environmental interference in FSO, and the gap you are filling by using low-cost, readily available SFP modules.
+Although FSO systems are well described in scientific papers, developing such device is quite complex engineering task.
+Main motivation of taking this topic is a need of creation affordable and functional proof of concept transcevier and establish a high throughput link. 
+Completing such connection is challenging, because it requires knowledge of multiple fields: designing optical system, precise mechanics, electronics and low level embedded system programming with real time requirements.   
 
 \section{Thesis Objectives}
 %Clearly state your goal to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
-Goal of this thesis is to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
-This will be achieved by using low-cost, readily available SFP modules and a custom-built mechanical system for beam steering, controlled by a microcontroller that reads the DDM data from the SFP module to maintain optimal alignment.
+Goal of this thesis is to design and develop a stable, affordable, high-speed FSO Ethernet link with active misalignment compensation.
+This will be achieved by using low-cost, readily available SFP modules and a custom-built mechanical system for beam steering, controlled by a microcontroller that reads the \ac{DDM} data from the SFP module to maintain optimal alignment.
+Realization of this link will be used as a platform to analyze practical issues induced by environmental factors. 
 \section{Scope and Structure}
 %A brief roadmap of the thesis document.
 The rest of the document will provide information and knowledge about the theoretical background of FSO communication, the design and architecture of the system, the control algorithm used for active alignment, the experimental methodology, and finally the results and analysis of the project.
-
+At the end conclusions will be drawn, it will be stated what wasn't optimal in taken solution and what should be done to improve a solution.
 
 \chapter{Theoretical Background and State of the Art}
 % Before showing your work, you need to prove you understand the physics and existing technology.
+As it was stated in introduction, the task of creating a transcevier and then establishing the link is quite challenging, because of involvement of multiple scientific fields, such as:
+precise mechanics, optics systems, electronics, motor control and low level firmware developing.
+This chapter will showcase how such systems are working to give a reader breif understanding of issues that need to be overcome later in the development.
+
 
 \section{Principles of FSO Communication}
 %How optical data links work and their general architecture.
+Easiest 
 
 \section{Light Propagation and Environmental Factors}
 A deep dive into atmospheric attenuation, scattering, turbulence, and how temperature (thermal expansion) affects optical alignment.
