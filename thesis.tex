@@ -1,0 +1,309 @@
+\documentclass[master,oneside,en,oldtitlepage]{dyplompwr}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx}
+\usepackage{epstopdf}  %in Linux based system install texlive-font-utils to start using eps files
+\epstopdfsetup{update}
+
+\usepackage{hyperref}
+
+% ==================== Packages ====================
+% \usepackage[left=3cm, right=3cm, top=3cm, bottom=3cm]{geometry}   % Page margins
+                                                                    % you can use showframe in geometry package to see the margins
+\usepackage{geometry}                   % For page margins and such
+\usepackage{cite} 					            % For handling references
+\usepackage{hyperref} 				          % For clickable links and references
+\usepackage{xcolor}     			          % For text colors
+\usepackage{indentfirst} 			          % Indent the first paragraph of a section
+\usepackage[printonlyused]{acronym}     % For acronyms
+\usepackage{amsmath}				            % For math equations
+\usepackage{titlesec}				            % For customizing section titles
+\usepackage[section]{placeins} 		      % For forcing figures to be in the same section
+\usepackage[T1]{fontenc} 			          % For better font encoding
+\usepackage{subcaption}				          % For subfigures
+\usepackage{appendix}                   % For appendices
+\usepackage{epstopdf}                   % For converting eps to pdf
+\usepackage{adjustbox}                  % For adjusting the size of the images
+\usepackage{pdflscape}                  % For landscape pages
+% =================== End Packages ===================
+
+% ==================== Settings ====================
+% Customizing section titles
+% Customizing section titles - modified for PWr template
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\paragraph}
+  {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+% Set the path to the image folder
+\graphicspath{
+    {./images/}
+}
+
+% Line spacing can be adjusted here if needed
+% \renewcommand{\baselinestretch}{1.5} 
+% =================== End Settings ===================
+
+
+% Input info here for the title page
+\faculty{Faculty of Electronics, Photonics and Microsystems}
+\fieldofstudy{Electronics}
+\speciality{Advanced Applied Electronics}
+\title{Design and analysis of free-space optical data link using SFP modules}
+\author{Kacper Ugorny}
+\supervisor{dr hab. inż. Aleksander Głuszek}
+\city{WROCŁAW}
+\year{2026}
+
+%Start of the document
+\begin{document}
+
+%Make title page
+\maketitle
+\setcounter{page}{2}
+
+% Blank page according to template
+\newpage
+\null
+
+% Page for abstracts
+\newpage
+\thispagestyle{plain}
+
+\noindent\begin{minipage}[t][0.48\textheight][t]{\textwidth}
+\noindent{\fontsize{20pt}{22pt}\selectfont\bfseries Streszczenie}
+
+\vspace{8pt}
+{\fontsize{16pt}{18pt}\selectfont
+\setlength{\parindent}{1.5em}
+\indent Polish abstract goes here.
+}
+\end{minipage}
+
+\vspace*{0.04\textheight}
+
+\noindent\begin{minipage}[t][0.48\textheight][t]{\textwidth}
+\noindent{\fontsize{20pt}{22pt}\selectfont\bfseries Abstract}
+
+\vspace{8pt}
+{\fontsize{16pt}{18pt}\selectfont
+\setlength{\parindent}{1.5em}
+\indent English abstract goes here.
+}
+\end{minipage}
+
+\newpage
+
+
+
+\clearpage
+\thispagestyle{empty}
+\vspace*{0.5\textheight}
+\begin{center}
+    \it{Acknowledgements go here.}
+\end{center}
+\clearpage
+
+\newpage
+
+% Table of contents
+\tableofcontents
+
+% ============= Begin Acronyms ==================
+\chapter{List of Acronyms}
+\begin{acronym}[FOUR]\itemsep=-5pt
+    \acro{ADC}{Analog to Digital Converter}
+\end{acronym}
+% ============= End Acronyms ==================
+
+% Main Text Block
+
+
+\chapter{Introduction}
+% This chapter sets the stage, explaining why your project matters and what you intend to achieve.
+
+\section{Background}
+Brief introduction to Free Space Optical (FSO) communication and its advantages (high speed, license-free).
+
+\section{Motivation}
+The challenge of alignment and environmental interference in FSO, and the gap you are filling by using low-cost, readily available SFP modules.
+
+\section{Thesis Objectives}
+Clearly state your goal to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
+
+\section{Scope and Structure}
+A brief roadmap of the thesis document.
+
+
+\chapter{Theoretical Background and State of the Art}
+% Before showing your work, you need to prove you understand the physics and existing technology.
+
+\section{Principles of FSO Communication}
+How optical data links work and their general architecture.
+
+\section{Light Propagation and Environmental Factors}
+A deep dive into atmospheric attenuation, scattering, turbulence, and how temperature (thermal expansion) affects optical alignment.
+
+\section{SFP Modules and Digital Diagnostic Monitoring (DDM)}
+Explain the architecture of SFP transceivers and how the DDM standard provides real-time telemetry, specifically focusing on Received Optical Power.
+
+\section{Existing Beam Steering Techniques}
+A review of current mechanical and optical tracking systems to give context to your own design.
+
+
+\chapter{System Architecture and Hardware Design}
+% This covers the [ENGINEERING ASPECT] of your thesis. It details the physical things you built.
+
+\section{System Overview}
+The high-level block diagram of your transmitter and receiver setups.
+
+\section{Mechanical and Optical Design}
+Details of the 3D-printed structure, lens positioning, and the integration of stepper motors for pan/tilt or lens shifting.
+
+\section{Electronic Circuit Design}
+The hardware required to run the system. Include your microcontroller choice, motor drivers, power supply, and the physical interface designed to read data from the SFP module.
+
+
+\chapter{Active Alignment and Control Algorithm}
+% This bridges your hardware and your [RESEARCH ASPECT]. It explains the "brain" of your system.
+
+\section{DDM Data Extraction}
+How your microcontroller communicates with the SFP module (e.g., via I2C) to constantly poll the Rx power levels.
+
+\section{Control Algorithm Design}
+The logic used to maintain optimal beam alignment. Explain the feedback loop (e.g., PID controller, hill-climbing algorithm, or custom logic) that translates power drops into precise stepper motor steps.
+
+\section{Misalignment Compensation}
+How the software specifically differentiates between standard signal fluctuation and physical drift caused by thermal expansion or physical transceiver head movement.
+
+
+\chapter{Experimental Methodology}
+% Since this is an [EXPERIMENTAL] thesis, you need to explain exactly how you tested the system.
+
+\section{Experimental Setup}
+The physical testing environment (indoor bench tests vs. outdoor free-space tests), distance of the link, and equipment used.
+
+\section{Test Scenarios}
+How you deliberately introduced misalignment to test the system (simulating thermal expansion, vibrating the mount, shifting the receiver).
+
+\section{Measurement Metrics}
+What defines "success" for your project? (e.g., Bit Error Rate (BER), packet loss, alignment recovery time, optical power stability).
+
+
+\chapter{Results and Analysis}
+% This is where you present your findings from the [RESEARCH ASPECT].
+
+\section{Baseline Performance}
+How the link performs statically without the active alignment control turned on.
+
+\section{Tracking Algorithm Performance}
+Graphs and data showing the system actively correcting itself when perturbed. Include response times and accuracy.
+
+\section{Environmental Impact}
+Data on how ambient conditions affected the link quality during your tests.
+
+\section{Discussion}
+An honest evaluation of your system's stability, limitations of the 3D-printed mechanics, and the speed bottleneck of polling DDM data.
+
+
+\chapter{Conclusion and Future Work}
+
+\section{Summary of Achievements}
+A review of the project, confirming whether you met the objectives outlined in Chapter 1.
+
+\section{Future Work}
+What could be improved in future iterations? (e.g., faster motors, different optics, machine learning for predictive tracking).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \chapter{Introduction} % A chapter title
+% Analog to DIgital Converters \ac{ADC} are used in a wide variety of applications...
+
+
+% \chapter{Conclusion}
+
+% Test reference to the bibliography \cite{digital_signal_processor_voigt_xu}.
+
+\newpage
+
+% citation format:
+% [1.2] - [chapter.number of citation]
+% citation for journal - J. Smith, title, journal, 2023, vol. 12, No. 10, pp-1011-1015 (possibly DOI)
+% citing book - J. Smith, title, publisher, 2010, ch 8, pp...
+% Citing the internet - http://... , Nov 28, 2023
+% formulas:
+% 123 (1) - number in brackets.
+
+\hbadness = 10000 % Suppresses underfull hbox warnings
+
+\bibliographystyle{plain}
+\bibliography{references}
+\newpage
+
+% Appendices
+\begin{appendices}
+
+% Custom command for appendix sections
+\newcommand{\appendixsection}[1]{
+    \refstepcounter{section}                    % Increment the section counter
+    \section*{Appendix \Alph{section}: #1}      % Format as "Appendix A: Title"
+    \addcontentsline{toc}{section}{Appendix \Alph{section}: #1}% Add to TOC
+}
+
+% Do not make a new page for the first appendix
+\let\clearpage\relax
+\chapter{Appendices}
+
+% First appendix: Landscape schematic
+\newgeometry{left=1cm, right=1cm, top=0.5cm}
+\appendixsection{ADC Board Schematic}
+Nah
+
+% First appendix: Landscape schematic
+\newgeometry{left=6.0cm, right=0.5cm, top=1.0cm}
+\appendixsection{DAC Board Schematic}
+Nah
+
+% Second appendix
+\appendixsection{Source Code} % Continue numbering properly
+\label{appendix:another} % Label for referencing
+
+Nah
+
+\end{appendices}
+
+%end of the work
+\end{document}
