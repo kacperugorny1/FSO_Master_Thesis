@@ -67,7 +67,7 @@
 \speciality{Advanced Applied Electronics}
 \title{Design and analysis of free-space optical data link using SFP modules}
 \author{Kacper Ugorny}
-\supervisor{dr hab. inż. Aleksander Głuszek}
+\supervisor{dr inż. Aleksander Głuszek}
 \city{WROCŁAW}
 \year{2026}
 
@@ -128,7 +128,9 @@
 % ============= Begin Acronyms ==================
 \chapter{List of Acronyms}
 \begin{acronym}[FOUR]\itemsep=-5pt
-    \acro{ADC}{Analog to Digital Converter}
+    \acro{FSO}{Free space optics}
+    \acro{RF}{Radio frequency}
+    \acro{ISM}{Industrial, Scientific, Medical}
 \end{acronym}
 % ============= End Acronyms ==================
 
@@ -137,25 +139,45 @@
 
 \chapter{Introduction}
 % This chapter sets the stage, explaining why your project matters and what you intend to achieve.
+In a time of rapid global digitalization and great increase of need to process data, demand for high throughput and reliable communication systems keep growing.
+With the expand of data rates, the need for security also rises. 
+Classic RF systems, although widely used, might not satisfy needs of all customers, due to high traffic on unlicensed (ISM) bands and possible unauthorized listening.
 
+Free Space Optical (FSO) communication might meet the requirments that RF lacks and collect the most demanding users. 
+Using precisly focused light beam, this solution not only exceeds RF solutions throughput, but also provides great security, by high directivity and difficulty of hijacking the signal.
+
+Those characteristics make the FSO systems highly competitive answer for need of private high throughput connections.
 \section{Background}
-Brief introduction to Free Space Optical (FSO) communication and its advantages (high speed, license-free).
+% Brief introduction to Free Space Optical (FSO) communication and its advantages (high speed, license-free).
+%Free space optical communication bases on transmitting data through the air using light source, typically a laser, which is detected on the other end by the photodiode.
+%Such communication have planty of advantages, such as high data rates, license-free operation, and immunity to electromagnetic interference. 
+%A very important aspect of FSO communication is security of such connection, because the beam is narrow and tapping into it breaks the connection.
+%However, it also has some disadvantages, such as sensitivity to atmospheric conditions and the need for precise alignment.
+
+Fundamental requirement of well functioning free space optical link is maintaining uninterrupted direct line of sight, between transmitter and receiver.
+RF systems on the other hand diverge and bounce of the obstacles or even pass through them and still can reach the destination.
+Ideally FSO systems, keep the transmitted beam collimated, what allows to achieve high power density and security of transmission at the expense of need for keeping precise alignment.
+In practical deployments it is a challenging task because of environmental factors, such like vibrations, thermal expansion or atmospheric conditions.
+That's why modern FSO systems are required to run advanced tracking and compensating systems.
+
 
 \section{Motivation}
-The challenge of alignment and environmental interference in FSO, and the gap you are filling by using low-cost, readily available SFP modules.
+%The challenge of alignment and environmental interference in FSO, and the gap you are filling by using low-cost, readily available SFP modules.
 
 \section{Thesis Objectives}
-Clearly state your goal to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
-
+%Clearly state your goal to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
+Goal of this thesis is to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
+This will be achieved by using low-cost, readily available SFP modules and a custom-built mechanical system for beam steering, controlled by a microcontroller that reads the DDM data from the SFP module to maintain optimal alignment.
 \section{Scope and Structure}
-A brief roadmap of the thesis document.
+%A brief roadmap of the thesis document.
+The rest of the document will provide information and knowledge about the theoretical background of FSO communication, the design and architecture of the system, the control algorithm used for active alignment, the experimental methodology, and finally the results and analysis of the project.
 
 
 \chapter{Theoretical Background and State of the Art}
 % Before showing your work, you need to prove you understand the physics and existing technology.
 
 \section{Principles of FSO Communication}
-How optical data links work and their general architecture.
+%How optical data links work and their general architecture.
 
 \section{Light Propagation and Environmental Factors}
 A deep dive into atmospheric attenuation, scattering, turbulence, and how temperature (thermal expansion) affects optical alignment.
