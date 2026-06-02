@@ -135,6 +135,8 @@
     \acro{OOK}{On Off Keying}
     \acro{NRZ}{Non-Return-To-Zero}
     \acro{RZ}{Return-to-Zero}
+    \acro{LOS}{Line Of Sight}
+    \acro{SFP}{Small Form-factor Pluggable}
     
 \end{acronym}
 % ============= End Acronyms ==================
@@ -225,10 +227,38 @@ Then demodulation of signal is done and data is received on the other end of the
 
 
 \section{Light Propagation and Environmental Factors}
-A deep dive into atmospheric attenuation, scattering, turbulence, and how temperature (thermal expansion) affects optical alignment.
+Creation and development of FSO systems requires extensive knowledge about light propagation as well as awareness of things that affect the transmission.
+Few of the examples are described below\cite{malik2015free}:
+\begin{itemize}
+  \item  Physical obstruction can temporally block the \ac{LOS}. For example a bird or a leaf might fly through the path.
+  \item Absorption is coused by the molecules of the water, that occurs in the atmosphere. 
+  Water dramatically decrease power of light passing through it.
+  Especially fog is most limiting factor.
+  \item Atmospheric turbulence might affect the beam, while passing through packets of air with different temperature therefore different refractive index.
+  \item Atmospheric attenuation is a general factor which is a collection of different aspects like enironmental conditions - humidity or amount of dust in the air.
+\end{itemize}
 
 \section{SFP Modules and Digital Diagnostic Monitoring (DDM)}
-Explain the architecture of SFP transceivers and how the DDM standard provides real-time telemetry, specifically focusing on Received Optical Power.
+A \ac{SFP} modules are standard peice of equipment that can be bought for affordable price. 
+These are compact transceivers used in telecommunication.
+SFP's plugged into a switch or a media converter convert electrical ethernet signal into modulated optical signal. 
+
+It is intended to use them in fiber cable exceeding tens or even hundreds of kilometers.
+SFP modules have different type of connectors, like RJ45 for electrical, LC and SC for optical. 
+As written before these modules are transceivers, allowing for full duplex communication. 
+It is realized by two physical optic channels or one optic channel using two different wavelenghts (eg. 1550nm Rx/1310nm Tx).
+
+Typically SFP uses wavelenghts of telecommunication windows, which are 1st window - 850nm, 2nd window - 1310nm and 3rd window 1550nm. 
+These wavelenghts are great for fiber communication because of low transmission loss in fibers.
+
+SFP modules are implementing \ac{DDM}, which is management technology which lets users to monitor in real time few parameters of the transmission.
+Those parameters are: output optical power, received power, temperature, laser current and transceiver supply voltage.
+
+Mentioned characteristics makes a SFP modules great candidate for base element of FSO transcevier.
+It drives the laser, handles the modulation and also implement the receving part.
+Different connectors and wavelenghts configurations allows for different designs of the transceiver. 
+DDM allows for real time data harvest, which is essential for tracking system.
+
 
 \section{Existing Beam Steering Techniques}
 A review of current mechanical and optical tracking systems to give context to your own design.
