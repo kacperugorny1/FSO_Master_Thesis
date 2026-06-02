@@ -132,6 +132,10 @@
     \acro{RF}{Radio frequency}
     \acro{ISM}{Industrial, Scientific, Medical Band - Free to use}
     \acro{DDM}{Digital Diagnostic Monitoring}
+    \acro{OOK}{On Off Keying}
+    \acro{NRZ}{Non-Return-To-Zero}
+    \acro{RZ}{Return-to-Zero}
+    
 \end{acronym}
 % ============= End Acronyms ==================
 
@@ -186,7 +190,39 @@ This chapter will showcase how such systems are working to give a reader breif u
 
 \section{Principles of FSO Communication}
 %How optical data links work and their general architecture.
-Easiest 
+Generally, an FSO link is an set of two components: a transmitter and a receiver. 
+The transmitter sends data signal in free space using modulated optical radiation. 
+It consists of radiating element, which is usually a laser diode, a laser modulater and set of optics responsible for creating a beam.
+
+Modulation is an essential functionaly in an optical transmitter. 
+It allows for embedding data into light beam, which then travels the significant distance to the recevier.
+Easiest way of modulating a optical signal is using direct modulation - changing an injection current of a laser diode, what affects the output optical power. 
+That way on-off binary modulation can be achieved, more widely known as \ac{OOK}\cite{hui2025introduction}.
+OOK simply trun on the light source to transmit a logic "one" and turns it off to transmit a "zero". 
+There are two types of OOK which are \ac{NRZ} and \ac{RZ}. 
+As a names suggest a RZ totally turns off the transmitter and a NRZ goes down to some level of output power.
+RZ has advantage of higher sensitivity\cite{henniger2010introduction}.
+
+Modulated light beam now enters an optical system that often consists of telescope or a collimator make the light beam capable of traveling long distances.
+Such signal needs to travel through a open space to the receiver.
+Line of sight of the transmitter and the receiver is required.
+There are many factors that influence the path of the light, some directly like weather conditions and other indirectly like vibrations, wind or thermal expansion.
+Taking those into consideration, tracking systems must be applied\cite{bloom2002physics}.
+
+When the beam reaches it's destination, it enters the optic systems, which focuses it at the photodiode, which converts light into electrical signal.
+Then demodulation of signal is done and data is received on the other end of the link.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Simple_fso_diagram.png}
+    \caption[short]{FSO system}
+    \label{fig1:scheme}
+\end{figure}
+
+
+
+
+
 
 \section{Light Propagation and Environmental Factors}
 A deep dive into atmospheric attenuation, scattering, turbulence, and how temperature (thermal expansion) affects optical alignment.
