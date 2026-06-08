@@ -1,6 +1,4 @@
 \documentclass[master,oneside,en,oldtitlepage]{dyplompwr}
-
-
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
@@ -216,8 +214,8 @@ Then demodulation of signal is done and data is received on the other end of the
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]{figures/Simple_fso_diagram.png}
-    \caption[short]{FSO system}
+    \includegraphics[width=0.8\textwidth]{figures/Simple_fso_diagram.jpg}
+    \caption[short]{Example FSO system}
     \label{fig1:scheme}
 \end{figure}
 
@@ -261,14 +259,43 @@ DDM allows for real time data harvest, which is essential for tracking system.
 
 
 \section{Existing Beam Steering Techniques}
-A review of current mechanical and optical tracking systems to give context to your own design.
+FSO link during it existance, might destabilize, what can lead to loss of received power, reduction of throughput and in the worst case total loss of connection.
+To limit the impact of environmental factors destroying the connection, providers of FSO links are implementing beam steering into their links.
+On top of that aligment of long range link, without any beam steering is a tedious task.
+At first glance it seems to be unnecessary, because in lab conditions link might work correctly, but deployment of long range link is a hard reality check.
+
+The easiest way of providing beam steering into the design is to create a mechanical structure capable of rotating the whole transciver. 
+Using such mechanism can provide big coverage and it is great solution when transceviers are placed on mobile platforms for example UAV drone.
+
+Next possible solution is implementing translation into the optical system.
+Movement of the lens or the mirror used to launch the beam, allows for change of angle in which the beam exits the transcevier.
+
+Lastly the translation of optical element could be swapped with a tilt of the lens or the mirror, but tilting might introduce a increased level of difficulty, of understanding and modeling such movement.
 
 
 \chapter{System Architecture and Hardware Design}
 % This covers the [ENGINEERING ASPECT] of your thesis. It details the physical things you built.
+This chapter will show and explain taken engineering choices used while building a FSO link which this document is all about.
+It will start with general overview of the transceviers and the system in which such devices are deployable.
+Next the mechanical and optical design will be shown and explained.
+At the end the electronic circuit design will be showcased.
 
 \section{System Overview}
-The high-level block diagram of your transmitter and receiver setups.
+The proposed system is built with:
+\begin{itemize}
+  \item Media converter + SFP 1490/1550 rx/tx BIDI DDM, 1 optical channel
+  \item 3d mechanical movement allowing for SFP translation
+  \item Electical control system controling the mechanics and tapping into SFP's DDM
+  \item Low throughput RF transmission
+  \item Plano convex 50mm 85mm fl 
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/System_diagram.jpg}
+    \caption[short]{System diagram}
+    \label{fig1:diag}
+\end{figure}
 
 \section{Mechanical and Optical Design}
 Details of the 3D-printed structure, lens positioning, and the integration of stepper motors for pan/tilt or lens shifting.
