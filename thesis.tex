@@ -182,6 +182,8 @@ Realization of this link will be used as a platform to analyze practical issues 
 The rest of the document will provide information and knowledge about the theoretical background of FSO communication, the design and architecture of the system, the control algorithm used for active alignment, the experimental methodology, and finally the results and analysis of the project.
 At the end conclusions will be drawn, it will be stated what wasn't optimal in taken solution and what should be done to improve a solution.
 
+
+
 \chapter{Theoretical Background and State of the Art}
 % Before showing your work, you need to prove you understand the physics and existing technology.
 As it was stated in introduction, the task of creating a transcevier and then establishing the link is quite challenging, because of involvement of multiple scientific fields, such as:
@@ -434,9 +436,58 @@ Three concurrent tasks are ran:
 
 \chapter{Active Alignment and Control Algorithm}
 % This bridges your hardware and your [RESEARCH ASPECT]. It explains the "brain" of your system.
-In this chapter it will be explained how the mechanical 
+This chapter explains how the built platform is controlled, starting from how data is collected and then how this information is used to set up the link and keep it running.
 \section{DDM Data Extraction}
 % How your microcontroller communicates with the SFP module (e.g., via I2C) to constantly poll the Rx power levels.
+As mentioned before, most of the modern SFP's has DDM implemented, which can be accessed by connecting to SFP's I2C pins, or using media converter functionalities.
+Unfortunetely in this case, used media converter dosen't provide DDM data interface, so controler must solder into SFP pins.
+
+SFP pinout is provided in the figure \ref{Fig10:sfp_pinout}. SDA is at pin 6 and SCL is at pin 5.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/pinout.png}
+  \caption[short]{Pinout of the sfp}
+  \label{Fig10:sfp_pinout}
+\end{figure}
+
+There is a lot of different information about SFP module that can be accessed via this I2C, but the most interesting part is in "Real Time Diagnostic and Control Registers" part.
+It is set of variables that are normally used to diagonse module and link health.
+
+Specific addresses can be seen in table \ref{tab:a2h_memory_map_short}.
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c|l|l|}
+\hline
+\textbf{A2h} & \textbf{Bit} & \multicolumn{1}{c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Description}} \\ \hline
+\multicolumn{4}{|l|}{\textbf{Converted analog values. Calibrated 16-bit data.}} \\ \hline
+96  & All & Temperature MSB                      & Internally measured module temperature       \\ \hline
+97  & All & Temperature LSB                      &                                              \\ \hline
+98  & All & Vcc MSB                              & Internally measured supply voltage in transceiver \\ \hline
+99  & All & Vcc LSB                              &                                              \\ \hline
+100 & All & TX Bias MSB                          & Internally measured TX Bias Current          \\ \hline
+101 & All & TX Bias LSB                          &                                              \\ \hline
+102 & All & TX Power MSB                         & Measured TX output power                     \\ \hline
+103 & All & TX Power LSB                         &                                              \\ \hline
+104 & All & RX Power MSB                         & Measured RX input power                      \\ \hline
+105 & All & RX Power LSB                         &                                              \\ \hline
+\multicolumn{4}{|c|}{\vdots} \\ \hline
+\end{tabular}
+\caption{Real Time Diagnostic and Control Registers [Address A2h, Bytes 96-111] \cite{SNIASFF8472}}
+\label{tab:a2h_memory_map_short}
+\end{table}
+\newpage
+Beside this table, there is also information how to interpret those values, according to the SFF8472:
+\\
+"Measured RX received optical power in mW. Value can represent either average received power or OMA
+depending upon how bit 3 of byte 92 (A0h) is set. Represented as a 16-bit unsigned integer with the power
+defined as the full 16-bit value (0-65535) with LSB equal to 0.1 $\mu W$, yielding a total range of 0 to 6.5535 mW
+(~ -40 to +8.2 dBm) \cite{SNIASFF8472}."
+
+There is no much information about refresh rate of this data in this specification document, so that had to be checked empirically.
+In case of SFP modules that were used in this transcevier, the period of updating data was $t = 15ms$, which corresponds to $f = \frac{1}{t} = \frac{1}{15 * 10^{-3}} = 66.67Hz$.
+
+Having this information it can be concluded that with this data rate update, transcevier will be capable of compensating low frequency changes.
 
 \section{Control Algorithm Design}
 The logic used to maintain optimal beam alignment. Explain the feedback loop (e.g., PID controller, hill-climbing algorithm, or custom logic) that translates power drops into precise stepper motor steps.
