@@ -11,6 +11,7 @@
 % ==================== Packages ====================
 % \usepackage[left=3cm, right=3cm, top=3cm, bottom=3cm]{geometry}   % Page margins
                                                                     % you can use showframe in geometry package to see the margins
+                                                                
 \usepackage{geometry}                   % For page margins and such
 \usepackage{cite} 					            % For handling references
 \usepackage{hyperref} 				          % For clickable links and references
@@ -25,9 +26,9 @@
 \usepackage{appendix}                   % For appendices
 \usepackage{epstopdf}                   % For converting eps to pdf
 \usepackage{adjustbox}                  % For adjusting the size of the images
-\usepackage{pdflscape}                  % For landscape pages
+\usepackage{pdflscape}                  % For landscape Packages
 % =================== End Packages ===================
-
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO: #1}}}
 % ==================== Settings ====================
 % Customizing section titles
 % Customizing section titles - modified for PWr template
@@ -280,28 +281,119 @@ It will start with general overview of the transceviers and the system in which 
 Next the mechanical and optical design will be shown and explained.
 At the end the electronic circuit design will be showcased.
 
-\section{System Overview}
-The proposed system is built with:
+\section{Transcevier and Link Overview}
+Transcievier architecture was carefuly chosen, to be realistic to finish in given deadline and also to be competitive on the market.
+Another constraint was the affordability and availability of the elements on the market. Main elements which it consist of are:
 \begin{itemize}
-  \item Media converter + SFP 1490/1550 rx/tx BIDI DDM, 1 optical channel
-  \item 3d mechanical movement allowing for SFP translation
-  \item Electical control system controling the mechanics and tapping into SFP's DDM
-  \item Low throughput RF transmission
-  \item Plano convex 50mm 85mm fl 
+  \item gigabit SFP media converter,
+  \item full duplex, 1.25GB/s, 80km, WDM, SFP 1490/1550 (rx/tx or tx/rx depending on the unit) SM SC connector providing one optical path, with DDM,
+  \item 3d mechanical movement allowing for SFP translation,
+  \item plano convex lens 50mm diameter, 85mm focal length.
+  \item electical control system for driving the motors and tapping into SFP's DDM,
+  \item esp32c6, for low throughput RF transmission,
 \end{itemize}
-
+  
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1\textwidth]{figures/System_diagram.jpg}
-    \caption[short]{System diagram}
-    \label{fig1:diag}
+    \caption[short]{Transcevier and System diagram}
+    \label{fig2:diag}
 \end{figure}
 
 \section{Mechanical and Optical Design}
-Details of the 3D-printed structure, lens positioning, and the integration of stepper motors for pan/tilt or lens shifting.
+%Details of the 3D-printed structure, lens positioning, and the integration of stepper motors for pan/tilt or lens shifting.
+Crucial part of transcevier part is optical and mechanical design. 
+In this particular case it is embedded together and movement provided by mechanics change the position of the light source to the lens.
+It changes the angle in which light exists the transcevier, allowing for beam steering as showcased on \ref{fig3:Opt_exp}.
 
-\section{Electronic Circuit Design}
-The hardware required to run the system. Include your microcontroller choice, motor drivers, power supply, and the physical interface designed to read data from the SFP module.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/Optics_explanation.jpg}
+    \caption[short]{Translation of light soruce against the lens}
+    \label{fig3:Opt_exp}
+\end{figure}
+
+In case, when light source is placed in the focal length - the light beam will be collimated. 
+Approximately if we move it in parallel to the lens the beam will be almost collimated and will exit the lens at the angle.
+If there is second light beam coming into the transcevier at the same angle as the exiting beam, it will focus in same place as the light source is.
+Thanks to this characteristic, this beam steering technique can work, allowing for transceviers to communicate when they are shifting from ideal alligment as shown at \ref{fig4:2_lenses}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/Lens_system1.jpg}
+    \caption[short]{System of 2 transceviers}
+    \label{fig4:2_lenses}
+\end{figure}
+
+To achieve such beam steering, proper mechanical system has been created, that allows for 3 axis movement of SFP module.
+First axis, let's call it x is perpendicular to the lens and translation alongside this axis change the distance from SFP to the lens.
+Another two axies, y and z are parallel to the lens and the moving the source in those direction steers the beam, as shown in the figure \ref{fig5:axies}. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{figures/axis.jpg}
+    \caption[short]{Axies}
+    \label{fig5:axies}
+\end{figure}
+
+Mechanical structure allowing movements alongside those axies has been based on lead screws and anti-backlash nut's rotated by stepper motors.
+Used screw has 1 mm pitch, what means that one full rotation of the screw will move the element by 1 mm.
+Beside lead screw, nuts and the bearings, rest of the mechanics was design for 3D printing.
+While 3D printing dosen't give best proporties of the mechanical structure (Low stiffnes, thermal properties), it is great for rapid development and prototyping.
+
+The 3D printed sturcture also includes a guides that elements move on. 
+The shape of those guides in all axies was trapezoidal shape, as it can be seen in the figure \ref{fig6:Guides}.
+At the right side there is shown hole which fits the guide rails. 
+There are circles put in the corners in order to elimnate jamming of the sharp corners.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/X_Y_1.png} % Replace with your first image file
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/X_Y_2.png} % Replace with your second image file
+    \end{minipage}
+    \caption{Left: Guide dimensions. Right: Guide hole}
+    \label{fig6:Guides}
+\end{figure}
+
+\newpage
+Mechanical movement was limited to 10mm x 10mm range of movement parallel to the lens by end switches.
+Such range gives quite big range of motion, so it made a low range tests a bit easier.
+Final structure is shown in the figure \ref{Fig7:Final}. 
+As it can be noticed the whole sturcture is placed on the tripod, by custom made mount and there is mechanical "Iron sights" for ease of setting up the link.
+
+\todo{DO nice photo of the whole transceiver}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/Final_structure.jpg}
+  \caption[short]{Final transcevier}
+  \label{Fig7:Final}
+\end{figure}
+
+
+\newpage
+\section{Controller Design}
+%The hardware required to run the system. Include your microcontroller choice, motor drivers, power supply, and the physical interface designed to read data from the SFP module.
+A controller is a important part of the project, as it's running the whole transcevier. 
+It consists of couple elements connected by GPIO's or communication protocols.
+
+The heart of the controller is STM32F1 microcontroller.
+It's outputs are connected to the motor controllers A4988, which are configurated for 4 x microstepping.
+Inputs are used to connect the end switches connected in series, so if any of the switches of the given axies are closed then it goes to one pin.
+I2C bus is used to connect the microcontroller to the SFP module, to sniff out the DDM data.
+There is also UART connection to the ESP32 microcontroller with PCB antenna serving as RF transceiver for communication in the link.
+
+Block scheme is presented in the figure \ref{Fig8:Controller}.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/Electrical_scheme.jpg}
+  \caption[short]{Block scheme of controller}
+  \label{Fig8:Controller}
+\end{figure}
 
 
 \chapter{Active Alignment and Control Algorithm}
