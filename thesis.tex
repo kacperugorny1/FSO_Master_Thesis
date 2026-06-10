@@ -380,27 +380,63 @@ As it can be noticed the whole sturcture is placed on the tripod, by custom made
 %The hardware required to run the system. Include your microcontroller choice, motor drivers, power supply, and the physical interface designed to read data from the SFP module.
 A controller is a important part of the project, as it's running the whole transcevier. 
 It consists of couple elements connected by GPIO's or communication protocols.
+\begin{itemize}
+  \item the heart of the controller is STM32F1 microcontroller,
+  \item it's outputs are connected to the motor controllers A4988, which are configurated for 4 x microstepping,
+  \item inputs are used to connect the end switches connected in series, so if any of the switches of the given axies are closed then it goes to one pin,
+  \item I2C bus is used to connect the microcontroller to the SFP module, to hijack out the DDM data,
+  \item There is also UART connection to the ESP32 microcontroller with PCB antenna serving as RF transceiver for communication in the link.
+\end{itemize}
 
-The heart of the controller is STM32F1 microcontroller.
-It's outputs are connected to the motor controllers A4988, which are configurated for 4 x microstepping.
-Inputs are used to connect the end switches connected in series, so if any of the switches of the given axies are closed then it goes to one pin.
-I2C bus is used to connect the microcontroller to the SFP module, to sniff out the DDM data.
-There is also UART connection to the ESP32 microcontroller with PCB antenna serving as RF transceiver for communication in the link.
-
-Block scheme is presented in the figure \ref{Fig8:Controller}.
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Electrical_scheme.jpg}
-  \caption[short]{Block scheme of controller}
+  \includegraphics[width=0.85\textwidth]{figures/Electrical_scheme.jpg}
+  \caption[short]{Block scheme of the controller}
   \label{Fig8:Controller}
+\end{figure}
+\newpage
+The firmware, that is ran by the STM32 microcontroller, is a Non-Preemptive, 
+Polling-Driven Single-Tasking Architecture, that calls multiple Finite State Machines (FSM).
+Tasks that it runs are:
+\begin{itemize}
+  \item Movement Handler - it drives the motors and checks the end switches,
+  \item Spiral Search FSM - controls the spiral search for setting up a new link,
+  \item Homing FSM - controls the homing procedure to position the SFP in callibrated position, 
+  \item Serial Comms - checks the UART communication, from here FSM's can be toggled from sleep to run,
+  \item DDM Readout - reads the DDM data with given period,
+  \item Optimize FSM - algorithm that tries to optimize the recived power for given distance from the lens,
+  \item Active Compensation FSM - algorithm that keeps link at the optimal power.
+\end{itemize}It is shown graphically in left figure of \ref{fig9:flow_charts}.
+\leavevmode\newline
+
+ESP32 has it own firmware, that runs freeRTOS and is responsible for information exchange with between two transceviers and lets operator connect to a link via the UART.
+Three concurrent tasks are ran:
+\begin{itemize}
+  \item PC Serial Comms - is a task that polls for communication from PC and fowards it to the one of the transceviers,
+  \item STM32 Serial Comms - is a task that polls for messages coming from STM32 and fowards it to the PC or second transcevier,
+  \item ESP-NOW Message Handler - is a task that polls for messages coming from the other transcevier and redirect it to the PC or the transcevier it is connected to by a UART.
+\end{itemize}It is shown graphically in right figure of \ref{fig9:flow_charts}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.62\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/STM32_flow.jpg} % Replace with your first image file
+    \end{minipage}\hfill
+    \begin{minipage}{0.37\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/ESP32_flow.jpg} % Replace with your second image file
+    \end{minipage}
+    \caption{Left: STM32 firmware diagram. Right: ESP32 firmware diagram}
+    \label{fig9:flow_charts}
 \end{figure}
 
 
 \chapter{Active Alignment and Control Algorithm}
 % This bridges your hardware and your [RESEARCH ASPECT]. It explains the "brain" of your system.
-
+In this chapter it will be explained how the mechanical 
 \section{DDM Data Extraction}
-How your microcontroller communicates with the SFP module (e.g., via I2C) to constantly poll the Rx power levels.
+% How your microcontroller communicates with the SFP module (e.g., via I2C) to constantly poll the Rx power levels.
 
 \section{Control Algorithm Design}
 The logic used to maintain optimal beam alignment. Explain the feedback loop (e.g., PID controller, hill-climbing algorithm, or custom logic) that translates power drops into precise stepper motor steps.
