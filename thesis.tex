@@ -27,11 +27,23 @@
 \usepackage{epstopdf}                   % For converting eps to pdf
 \usepackage{adjustbox}                  % For adjusting the size of the images
 \usepackage{pdflscape}                  % For landscape Packages
+\usepackage{listings}
 % =================== End Packages ===================
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO: #1}}}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!50!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true
+}
 % ==================== Settings ====================
 % Customizing section titles
 % Customizing section titles - modified for PWr template
+% Optional customization
 \titleformat{\chapter}[display]
   {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
 \titleformat{\section}
@@ -290,6 +302,7 @@ Another constraint was the affordability and availability of the elements on the
   \item gigabit SFP media converter,
   \item full duplex, 1.25GB/s, 80km, WDM, SFP 1490/1550 (rx/tx or tx/rx depending on the unit) SM SC connector providing one optical path, with DDM,
   \item 3d mechanical movement allowing for SFP translation,
+  \item Nema 17 1.8 $\deg$ per step
   \item plano convex lens 50mm diameter, 85mm focal length.
   \item electical control system for driving the motors and tapping into SFP's DDM,
   \item esp32c6, for low throughput RF transmission,
@@ -297,7 +310,7 @@ Another constraint was the affordability and availability of the elements on the
   
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=1\textwidth]{figures/System_diagram.jpg}
+    \includegraphics[width=.95\textwidth]{figures/System_diagram.jpg}
     \caption[short]{Transcevier and System diagram}
     \label{fig2:diag}
 \end{figure}
@@ -329,22 +342,22 @@ Thanks to this characteristic, this beam steering technique can work, allowing f
 
 To achieve such beam steering, proper mechanical system has been created, that allows for 3 axis movement of SFP module.
 First axis, let's call it x is perpendicular to the lens and translation alongside this axis change the distance from SFP to the lens.
-Another two axies, y and z are parallel to the lens and the moving the source in those direction steers the beam, as shown in the figure \ref{fig5:axies}. 
+Another two axes, y and z are parallel to the lens and the moving the source in those direction steers the beam, as shown in the figure \ref{fig5:axes}. 
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.4\textwidth]{figures/axis.jpg}
-    \caption[short]{Axies}
-    \label{fig5:axies}
+    \caption[short]{axes}
+    \label{fig5:axes}
 \end{figure}
 
-Mechanical structure allowing movements alongside those axies has been based on lead screws and anti-backlash nut's rotated by stepper motors.
+Mechanical structure allowing movements alongside those axes has been based on lead screws and anti-backlash nut's rotated by stepper motors.
 Used screw has 1 mm pitch, what means that one full rotation of the screw will move the element by 1 mm.
 Beside lead screw, nuts and the bearings, rest of the mechanics was design for 3D printing.
 While 3D printing dosen't give best proporties of the mechanical structure (Low stiffnes, thermal properties), it is great for rapid development and prototyping.
 
 The 3D printed sturcture also includes a guides that elements move on. 
-The shape of those guides in all axies was trapezoidal shape, as it can be seen in the figure \ref{fig6:Guides}.
+The shape of those guides in all axes was trapezoidal shape, as it can be seen in the figure \ref{fig6:Guides}.
 At the right side there is shown hole which fits the guide rails. 
 There are circles put in the corners in order to elimnate jamming of the sharp corners.
 
@@ -385,7 +398,7 @@ It consists of couple elements connected by GPIO's or communication protocols.
 \begin{itemize}
   \item the heart of the controller is STM32F1 microcontroller,
   \item it's outputs are connected to the motor controllers A4988, which are configurated for 4 x microstepping,
-  \item inputs are used to connect the end switches connected in series, so if any of the switches of the given axies are closed then it goes to one pin,
+  \item inputs are used to connect the end switches connected in series, so if any of the switches of the given axes are closed then it goes to one pin,
   \item I2C bus is used to connect the microcontroller to the SFP module, to hijack out the DDM data,
   \item There is also UART connection to the ESP32 microcontroller with PCB antenna serving as RF transceiver for communication in the link.
 \end{itemize}
@@ -406,7 +419,7 @@ Tasks that it runs are:
   \item Homing FSM - controls the homing procedure to position the SFP in callibrated position, 
   \item Serial Comms - checks the UART communication, from here FSM's can be toggled from sleep to run,
   \item DDM Readout - reads the DDM data with given period,
-  \item Optimize FSM - algorithm that tries to optimize the recived power for given distance from the lens,
+  \item Optimize FSM - algorithm that tries to optimize the received power for given distance from the lens,
   \item Active Compensation FSM - algorithm that keeps link at the optimal power.
 \end{itemize}It is shown graphically in left figure of \ref{fig9:flow_charts}.
 \leavevmode\newline
@@ -440,7 +453,7 @@ This chapter explains how the built platform is controlled, starting from how da
 \section{DDM Data Extraction}
 % How your microcontroller communicates with the SFP module (e.g., via I2C) to constantly poll the Rx power levels.
 As mentioned before, most of the modern SFP's has DDM implemented, which can be accessed by connecting to SFP's I2C pins, or using media converter functionalities.
-Unfortunetely in this case, used media converter dosen't provide DDM data interface, so controler must solder into SFP pins.
+Unfortunetely in this case, used media converter dosen't provide DDM data interface, so controler must be soldered into SFP pins.
 
 SFP pinout is provided in the figure \ref{Fig10:sfp_pinout}. SDA is at pin 6 and SCL is at pin 5.
 \begin{figure}[htbp]
@@ -487,10 +500,58 @@ defined as the full 16-bit value (0-65535) with LSB equal to 0.1 $\mu W$, yieldi
 There is no much information about refresh rate of this data in this specification document, so that had to be checked empirically.
 In case of SFP modules that were used in this transcevier, the period of updating data was $t = 15ms$, which corresponds to $f = \frac{1}{t} = \frac{1}{15 * 10^{-3}} = 66.67Hz$.
 
-Having this information it can be concluded that with this data rate update, transcevier will be capable of compensating low frequency changes.
+Having this information it can be concluded that with this data rate, transcevier will be capable of compensating low frequency changes.
+
+\section{Connection Seeking Algorithm (Spiral Search)}
+
+After placing the transceivers, so they are aimed at each other, it is though task to make them shoot perfectly "straight".
+It's couse imperfections of the mechanical design, or even media converter itself, the SFP module can be a little bit rotated.
+It can be calibrated it coarsely, but at the end some search algorithm had to be developed.
+
+Applied algorithm is Square Spiral Search Pattern Method. Because the transcevier shoots almost straight, the direct neighborhood must be searched.
+Flowchart has been presented in the figure \ref{Fig11:Spiral search}. The algorithm is straight forward, with asynchronous stop condition. 
+Lower the dx denser the search. 
+That dependency allows for using the search in different scenarios,
+ like in case the connection was lost dense version will be appropiate.
+During link set up rather coarse version is suggested, because the field of search is much bigger. 
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/Flow_chart_spiral.jpg}
+  \caption[short]{Spiral search flow chart}
+  \label{Fig11:Spiral search}
+\end{figure}
+
+\section{Maximum Scan Algorithm}
+
+During link set up, it is not required, to keep a connection. 
+When a first couple milli Watts are seen on the monitoring then it's a time for Maximum Scan Algorithm.
+
+It is algorithm that scans the given axis three times and saves maximum received power. 
+During fourth and further walkthroughs it stops when it is close to the previously found maximum. 
+Then it repeats the procedure for second axis.
 
 \section{Control Algorithm Design}
-The logic used to maintain optimal beam alignment. Explain the feedback loop (e.g., PID controller, hill-climbing algorithm, or custom logic) that translates power drops into precise stepper motor steps.
+%The logic used to maintain optimal beam alignment. Explain the feedback loop (e.g., PID controller, hill-climbing algorithm, or custom logic) that translates power drops into precise stepper motor steps.
+
+When the link is already set up and used for data transfer, the continuous transmission is preferred, so a active compensation can't use same algorithm, which was used during link set up to maximize received power.
+As stated in DDM section, refresh rate of received power in DDM is rather slow, the algorithm to actively compensate the changing value dosen't need to be really fast.
+
+On top of that the power curve is rather simple with one maximum,
+because we only apply the algorithm in Y and Z axis (parallel to the lens), 
+since X (perpendicular to the lens) should be already well align after link set up. 
+\begin{lstlisting}
+  algorithm Discrete Space Hill Climbing is
+    currentPow := rxPow
+    previousPow := 0
+    loop do
+        currentPow := rxPow
+        if currentPow < previousPow then
+          return
+        previousPow := currentPow
+        move further
+\end{lstlisting}
+
 
 \section{Misalignment Compensation}
 How the software specifically differentiates between standard signal fluctuation and physical drift caused by thermal expansion or physical transceiver head movement.
