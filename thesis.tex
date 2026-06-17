@@ -18,6 +18,7 @@
 \usepackage{xcolor}     			          % For text colors
 \usepackage{indentfirst} 			          % Indent the first paragraph of a section
 \usepackage[printonlyused]{acronym}     % For acronyms
+\usepackage{float}
 \usepackage{amsmath}				            % For math equations
 \usepackage{titlesec}				            % For customizing section titles
 \usepackage[section]{placeins} 		      % For forcing figures to be in the same section
@@ -103,7 +104,9 @@
 \vspace{8pt}
 {\fontsize{16pt}{18pt}\selectfont
 \setlength{\parindent}{1.5em}
-\indent Polish abstract goes here.
+\indent Niniejsza praca opisuje architekturę i realizacje autorskiego optycznego aparatu nadawczo-odbiorczego, wykonanego z przystępno cenowych szeroko dostepnych elementów.
+Przy użyciu dwóch takich apartów możliwe jest stworzenie wysoko przepustowego łącza optycznego z aktywną kompensacją, co zostało opisane w pracy.
+Opisane zostały również badania takowego łącza wraz z wnioskami i możliwym kierunkiem rozwoju pracy.
 }
 \end{minipage}
 
@@ -115,7 +118,9 @@
 \vspace{8pt}
 {\fontsize{16pt}{18pt}\selectfont
 \setlength{\parindent}{1.5em}
-\indent English abstract goes here.
+\indent This paper describes the architecture and implementation of a custom-designed optical transceiver, constructed from affordable, widely available components. 
+Using two such transceivers, it is possible to establish a high-throughput optical link with active compensation, what have been described in the thesis. 
+The testing of this link is also described, along with the conclusions and possible directions for future work.
 }
 \end{minipage}
 
@@ -148,6 +153,7 @@
     \acro{RZ}{Return-to-Zero}
     \acro{LOS}{Line Of Sight}
     \acro{SFP}{Small Form-factor Pluggable}
+    \acro{EMA}{Exponetial Moving Average}
     
 \end{acronym}
 % ============= End Acronyms ==================
@@ -161,10 +167,12 @@ In a time of rapid global digitalization and great increase of need to process d
 With the expand of data rates, the need for security also rises. 
 Classic \ac{RF} systems, although widely used, might not satisfy needs of all customers, due to high traffic on unlicensed \ac{ISM} bands and possible unauthorized listening.
 
+On the other hand there might be a situation where fiber might be also to expensive or just too difficult to install.
+
 \ac{FSO} communication might meet the requirments that RF lacks and collect the most demanding users. 
 Using precisly focused light beam, this solution not only exceeds RF solutions in terms of throughput, but also provides great security, by high directivity and difficulty of hijacking the signal.
 
-Those characteristics makes the FSO systems highly competitive answer for need of private high throughput connections.
+Those characteristics makes the FSO systems highly competitive answer for need of private high throughput connections\cite{trichili2020roadmap}.
 \section{Background}
 % Brief introduction to Free Space Optical (FSO) communication and its advantages (high speed, license-free).
 %Free space optical communication bases on transmitting data through the air using light source, typically a laser, which is detected on the other end by the photodiode.
@@ -227,7 +235,7 @@ Taking those into consideration, tracking systems must be applied\cite{bloom2002
 When the beam reaches it's destination, it enters the optic systems, which focuses it at the photodiode, which converts light into electrical signal.
 Then demodulation of signal is done and data is received on the other end of the link.
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/Simple_fso_diagram.jpg}
     \caption[short]{Example FSO system}
@@ -240,7 +248,7 @@ Then demodulation of signal is done and data is received on the other end of the
 
 
 \section{Light Propagation and Environmental Factors}
-Creation and development of FSO systems requires extensive knowledge about light propagation as well as awareness of things that affect the transmission.
+Creation and development of FSO systems requires extensive knowledge about light propagation as well as awareness of environmental factors that affect the transmission.
 Few of the examples are described below\cite{malik2015free}:
 \begin{itemize}
   \item  Physical obstruction can temporally block the \ac{LOS}. For example a bird or a leaf might fly through the path.
@@ -279,7 +287,7 @@ To limit the impact of environmental factors destroying the connection, provider
 On top of that aligment of long range link, without any beam steering is a tedious task.
 At first glance it seems to be unnecessary, because in lab conditions link might work correctly, but deployment of long range link is a hard reality check.
 
-The easiest way of providing beam steering into the design is to create a mechanical structure capable of rotating the whole transciver. 
+The easiest way of providing beam steering into the design is to create a mechanical structure capable of rotating the whole transcevier. 
 Using such mechanism can provide big coverage and it is great solution when transceviers are placed on mobile platforms for example UAV drone.
 
 Next possible solution is implementing translation into the optical system.
@@ -308,7 +316,7 @@ Another constraint was the affordability and availability of the elements on the
   \item esp32c6, for low throughput RF transmission,
 \end{itemize}
   
-\begin{figure}[htbp]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=.95\textwidth]{figures/System_diagram.jpg}
     \caption[short]{Transcevier and System diagram}
@@ -321,7 +329,7 @@ Crucial part of transcevier part is optical and mechanical design.
 In this particular case it is embedded together and movement provided by mechanics change the position of the light source to the lens.
 It changes the angle in which light exists the transcevier, allowing for beam steering as showcased on \ref{fig3:Opt_exp}.
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=1\textwidth]{figures/Optics_explanation.jpg}
     \caption[short]{Translation of light soruce against the lens}
@@ -333,7 +341,7 @@ Approximately if we move it in parallel to the lens the beam will be almost coll
 If there is second light beam coming into the transcevier at the same angle as the exiting beam, it will focus in same place as the light source is.
 Thanks to this characteristic, this beam steering technique can work, allowing for transceviers to communicate when they are shifting from ideal alligment as shown at \ref{fig4:2_lenses}.
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=1\textwidth]{figures/Lens_system1.jpg}
     \caption[short]{System of 2 transceviers}
@@ -344,10 +352,10 @@ To achieve such beam steering, proper mechanical system has been created, that a
 First axis, let's call it x is perpendicular to the lens and translation alongside this axis change the distance from SFP to the lens.
 Another two axes, y and z are parallel to the lens and the moving the source in those direction steers the beam, as shown in the figure \ref{fig5:axes}. 
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.4\textwidth]{figures/axis.jpg}
-    \caption[short]{axes}
+    \caption[short]{Translations of transcevier}
     \label{fig5:axes}
 \end{figure}
 
@@ -360,8 +368,9 @@ The 3D printed sturcture also includes a guides that elements move on.
 The shape of those guides in all axes was trapezoidal shape, as it can be seen in the figure \ref{fig6:Guides}.
 At the right side there is shown hole which fits the guide rails. 
 There are circles put in the corners in order to elimnate jamming of the sharp corners.
+\\
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
@@ -378,16 +387,38 @@ There are circles put in the corners in order to elimnate jamming of the sharp c
 \newpage
 Mechanical movement was limited to 10mm x 10mm range of movement parallel to the lens by end switches.
 Such range gives quite big range of motion, so it made a low range tests a bit easier.
-Final structure is shown in the figure \ref{Fig7:Final}. 
-As it can be noticed the whole sturcture is placed on the tripod, by custom made mount and there is mechanical "Iron sights" for ease of setting up the link.
+Final structure is shown in the figures \ref{Fig7:tr1}, \ref{Fig7:tr2}, \ref{Fig7:tr3}. 
+In the figure \ref{Fig7:tr1} the front left photo of transcevier is shown. as it can be seen lens placed in a housing and it's held in place by two screws. 
+Also it can be noticed the whole sturcture is placed on the tripod, by custom made mount.
 
-\todo{DO nice photo of the whole transceiver}
-\begin{figure}[htbp]
+
+\todo{LEPSZE ZDJECIA}
+\todo{OD PUNKTOW POZAZNACZAC I OPISAC NA ZDJECIACH!!!}
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/Final_structure.jpg}
-  \caption[short]{Final transcevier}
-  \label{Fig7:Final}
+  \includegraphics[width=0.7\textwidth]{figures/rzut2.jpg}
+  \caption[short]{Transcevier photo no.1}
+  \label{Fig7:tr1}
 \end{figure}
+
+In the figure \ref{Fig7:tr2} is a picture of transcevier from other side, where lead screws are visible.
+There are also mechanical "Iron sights" for ease of setting up the link.
+On this picutre it can be seen that mechanical elements like nuts and bearings are pushed into place which fits them.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/rzut1.jpg}
+  \caption[short]{Transcevier photo no.2}
+  \label{Fig7:tr2}
+\end{figure}
+In the figure \ref{Fig7:tr3} three stepper motors are visible, these are mounted using screws into the design, also there is dedicated housing for the controller on the other end.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/rzut3.jpg}
+  \caption[short]{Transcevier photo no.3}
+  \label{Fig7:tr3}
+\end{figure}
+
 
 
 \newpage
@@ -403,7 +434,7 @@ It consists of couple elements connected by GPIO's or communication protocols.
   \item There is also UART connection to the ESP32 microcontroller with PCB antenna serving as RF transceiver for communication in the link.
 \end{itemize}
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.85\textwidth]{figures/Electrical_scheme.jpg}
   \caption[short]{Block scheme of the controller}
@@ -421,30 +452,30 @@ Tasks that it runs are:
   \item DDM Readout - reads the DDM data with given period,
   \item Optimize FSM - algorithm that tries to optimize the received power for given distance from the lens,
   \item Active Compensation FSM - algorithm that keeps link at the optimal power.
-\end{itemize}It is shown graphically in left figure of \ref{fig9:flow_charts}.
-\leavevmode\newline
+\end{itemize}It is shown graphically in figure \ref{Fig9:stm32}.
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/STM32_flow.jpg}
+  \caption[short]{STM32 firmware diagram}
+  \label{Fig9:stm32}
+\end{figure}
+\leavevmode
 ESP32 has it own firmware, that runs freeRTOS and is responsible for information exchange with between two transceviers and lets operator connect to a link via the UART.
 Three concurrent tasks are ran:
 \begin{itemize}
   \item PC Serial Comms - is a task that polls for communication from PC and fowards it to the one of the transceviers,
   \item STM32 Serial Comms - is a task that polls for messages coming from STM32 and fowards it to the PC or second transcevier,
   \item ESP-NOW Message Handler - is a task that polls for messages coming from the other transcevier and redirect it to the PC or the transcevier it is connected to by a UART.
-\end{itemize}It is shown graphically in right figure of \ref{fig9:flow_charts}.
+\end{itemize}It is shown graphically in figure \ref{Fig9:esp32}.
 
-\begin{figure}[htbp]
-    \centering
-    \begin{minipage}{0.62\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/STM32_flow.jpg} % Replace with your first image file
-    \end{minipage}\hfill
-    \begin{minipage}{0.37\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/ESP32_flow.jpg} % Replace with your second image file
-    \end{minipage}
-    \caption{Left: STM32 firmware diagram. Right: ESP32 firmware diagram}
-    \label{fig9:flow_charts}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.65\textwidth]{figures/ESP32_flow.jpg}
+  \caption[short]{ESP32 firmware diagram}
+  \label{Fig9:esp32}
 \end{figure}
+
 
 
 \chapter{Active Alignment and Control Algorithm}
@@ -456,7 +487,7 @@ As mentioned before, most of the modern SFP's has DDM implemented, which can be 
 Unfortunetely in this case, used media converter dosen't provide DDM data interface, so controler must be soldered into SFP pins.
 
 SFP pinout is provided in the figure \ref{Fig10:sfp_pinout}. SDA is at pin 6 and SCL is at pin 5.
-\begin{figure}[htbp]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.85\textwidth]{figures/pinout.png}
   \caption[short]{Pinout of the sfp}
@@ -467,7 +498,7 @@ There is a lot of different information about SFP module that can be accessed vi
 It is set of variables that are normally used to diagonse module and link health.
 
 Specific addresses can be seen in table \ref{tab:a2h_memory_map_short}.
-\begin{table}[htbp]
+\begin{table}[h!]
 \centering
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{|c|c|l|l|}
@@ -515,21 +546,43 @@ That dependency allows for using the search in different scenarios,
  like in case the connection was lost dense version will be appropiate.
 During link set up rather coarse version is suggested, because the field of search is much bigger. 
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=0.85\textwidth]{figures/Flow_chart_spiral.jpg}
   \caption[short]{Spiral search flow chart}
   \label{Fig11:Spiral search}
 \end{figure}
 
-\section{Maximum Scan Algorithm}
 
-During link set up, it is not required, to keep a connection. 
-When a first couple milli Watts are seen on the monitoring then it's a time for Maximum Scan Algorithm.
+\section{Optimizing Algorithm}
+After running spiral search, received power is at low, unoptimal power level.
+The purpose of Optimizing Algorithm is to find a maximum received power point, by controlling the Y/Z axes.
+In this moment the continuous connection isn't required, since it's still ran during link set up.
 
-It is algorithm that scans the given axis three times and saves maximum received power. 
-During fourth and further walkthroughs it stops when it is close to the previously found maximum. 
-Then it repeats the procedure for second axis.
+Proposed algorithm is bounded Linear search, pseudo code is shown at listing \ref{lst:linear search}.
+It sweeps three times to ensure it approach the hill from both sides and in case it starts going in wrong direction.
+The change direction condition is limited to quater of current maxPow, to make the algorithm a bit faster.
+The 50ms delay between moving and currentPow readout lets the mechanical vibrations settle to make readout undistorted.
+Firstly such algorightm should be applied to one axis then another \cite{arora2014two}.
+\\
+\begin{lstlisting}[caption={Bounded Linear Search}, label={lst:linear search}]
+  algorithm Bounded Linear Search is
+    currentPow := rxPow
+    maxPow := rxPow
+    dirChangeCount := 0
+    loop do
+        currentPow := rxPow
+        if currentPow >= maxPow  then
+          if dirChangeCount >= 3 then
+            return
+          maxPow := currentPow
+        else if currentPow < maxPow / 4 then
+          dir := !dir
+          dirChangeCount := dirChangeCount + 1
+        move further in dir
+        wait 50ms
+\end{lstlisting}
+
 
 \section{Control Algorithm Design}
 %The logic used to maintain optimal beam alignment. Explain the feedback loop (e.g., PID controller, hill-climbing algorithm, or custom logic) that translates power drops into precise stepper motor steps.
@@ -538,65 +591,223 @@ When the link is already set up and used for data transfer, the continuous trans
 As stated in DDM section, refresh rate of received power in DDM is rather slow, the algorithm to actively compensate the changing value dosen't need to be really fast.
 
 On top of that the power curve is rather simple with one maximum,
-because we only apply the algorithm in Y and Z axis (parallel to the lens), 
-since X (perpendicular to the lens) should be already well align after link set up. 
-\begin{lstlisting}
+since it's the algorithm is applied in Y and Z axis (parallel to the lens), 
+since X axis (perpendicular to the lens) should be already well align after link set up. 
+The Discrete Hill Climing Algorithm is showcased in form of pseudo code \ref{lst:hill climb}. 
+This procedure differentiates from the previous algorithm by the execution time, since it dosen't scan broad range, rather observe how values changes in real time.
+Such algorithm should be applied firstly to one axis and then to the another \cite{chinnasamy2022review}.
+\newpage
+\begin{lstlisting}[caption={Hill Climbing algorithm}, label={lst:hill climb}]
   algorithm Discrete Space Hill Climbing is
     currentPow := rxPow
+    dir := 0
+    dirChangeCount := 0
     previousPow := 0
     loop do
         currentPow := rxPow
         if currentPow < previousPow then
-          return
+          if dirChangeCount = 2 then
+            return
+          dir := !dir
+          dirChangeCount := dirChangeCount + 1
         previousPow := currentPow
-        move further
+        move further in dir
 \end{lstlisting}
 
 
+
 \section{Misalignment Compensation}
-How the software specifically differentiates between standard signal fluctuation and physical drift caused by thermal expansion or physical transceiver head movement.
+%How the software specifically differentiates between standard signal fluctuation and physical drift caused by thermal expansion or physical transceiver head movement.
+There are few more nuances in the active compensation.
+Firstly, the reading from the sensor might fluctuate and can be affected by high frequency changes.
+
+To get rid of unwanted readings, some sort of low pass filter must be applied.
+The LPF of choice in this case was \ac{EMA}.
+It is an algorithm that dosen't require memory for saving the samples, in comparison to other moving averages like Simple Moving Average (SMA) or Weighted Moving Average (WMA) \cite{lotysh2023comparison}.
+The equation for an EMA is:
+\begin{equation}
+  y_i = \alpha * x_i + (1 - \alpha) * y_i
+\end{equation}
+where y is the output, x is the input and alpha is an constant in range [0, 1].
+
+
+Another point is that, link is established by two transceviers. 
+Running algorithms at no communication between 2 ends would lead to strange results and decalibration.
+To make it convenient RF communication was introduced into the design.
+Basic handshake is introduced, as it can be seen on \ref{Fig12:Exec_flow}.
+\newpage
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/Execution_diagram.png}
+  \caption[short]{Execution flow}
+  \label{Fig12:Exec_flow}
+\end{figure}
+
+Such sequence should guarantee good execution of hill climb algorithms in both of transceviers of a link.
+The order that transcevier initializing the compensation dispatches Hill Climing Algorithm on second transcevier firstly,
+ensures that no algorithm will be run when there is no working connection.
 
 
 \chapter{Experimental Methodology}
 % Since this is an [EXPERIMENTAL] thesis, you need to explain exactly how you tested the system.
+In this chapter experimental methodology will be explained. 
+The setup of the test, scenarios in which link will be placed and measurement metrics. 
 
 \section{Experimental Setup}
-The physical testing environment (indoor bench tests vs. outdoor free-space tests), distance of the link, and equipment used.
+%The physical testing environment (indoor bench tests vs. outdoor free-space tests), distance of the link, and equipment used.
+Transcevier itself has been equipped with custom made tripod mount, to allow for simple placement without a need for time consuming installation.
+The environment in which link was tested was a outdoor free-space test. 
+Transceviers were placed in two seperate buildings and they were spaced 23 meters of each other according to rangefinder measurement, which is shown in figure \ref{fig:rangefinder}.
+ \begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/rangefinder.png}
+  \caption[short]{Rangefinder measurement}
+  \label{fig:rangefinder}
+\end{figure}
 
-\section{Test Scenarios}
-How you deliberately introduced misalignment to test the system (simulating thermal expansion, vibrating the mount, shifting the receiver).
+Such environment is ideal for testing a link, because it's real application of such link, where the beam passes through a free space and can be affected by weather conditions.
+The diagram is shown in the figure \ref{fig:env_test}. Between buildings the rain and other factors can affect the beam.
 
-\section{Measurement Metrics}
-What defines "success" for your project? (e.g., Bit Error Rate (BER), packet loss, alignment recovery time, optical power stability).
+ \begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/Test environment.png}
+  \caption[short]{Environment}
+  \label{fig:env_test}
+\end{figure}
 
+\newpage
+\section{Test Scenarios and Measurement metrics}
+%How you deliberately introduced misalignment to test the system (simulating thermal expansion, vibrating the mount, shifting the receiver).
+The test scenarios were dictated by the weather conditions in this example. 
+The conditions at the test day were variable, constatnly changing, varying from clear day to runny and windy.
+The effects of the conditions is presented in the next chapter.
 
+%What defines "success" for your project? (e.g., Bit Error Rate (BER), packet loss, alignment recovery time, optical power stability).
+The only measurement metric, that was collected during the tests was received power.
+It was collected by the Raspberry Pi4 computer connected to one of the devices. The other end measurement was provided by RF interface ESPNOW.
 \chapter{Results and Analysis}
 % This is where you present your findings from the [RESEARCH ASPECT].
 
 \section{Baseline Performance}
-How the link performs statically without the active alignment control turned on.
+%How the link performs statically without the active alignment control turned on.
+The baseline for the research is performance of FSO link without active compensation turned on. 
+Such measurements have been collected and are presented below in the figure \ref{fig:cgi1}.
+The blue line is a measurement from master transcevier which is the one with Raspberry PI4 connected.
+The orange line represent received power of second transceiver.
 
-\section{Tracking Algorithm Performance}
-Graphs and data showing the system actively correcting itself when perturbed. Include response times and accuracy.
+The results tends to slowly fall down in this case. The ripples after 800 seconds of running are caused by heavy rain.
+
+Over the 1000 seconds of running received power decreased by almost 200uW, from 430uW in case of Master transceiver. 
+Slave starting performance was at 200uW and didnt fall down as dramatically like master performance. 
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(1).png}
+  \caption[short]{Measurement without active compensation}
+  \label{fig:cgi1}
+\end{figure} 
+
+\newpage
+\section{Active Compensation Algorithm Performance}
+%Graphs and data showing the system actively correcting itself when perturbed. Inclsude response timess and accuracy.
+To compare with the baseline performance, active compensation performance was measured as well.
+In the figure \ref{fig:cg2}, the performance of both Master and Slave transceviers is visible.
+The blue line is a measurement from Masster transcevier, where the orange is the slave. 
+On this plot there are red vertical lines that indicate AC INIT event, which is initialization of active compensation sequence.
+
+The factors that were affecting the transcevier were weather conditions at the outside. 
+Overally the output power was improved throughout the measurement, by finding new maximum output power. 
+Looking at the baseline performance, the active compensation works as intended and serves it purpose by not letting the link to degradate.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(2).png}
+  \caption[short]{Measurement with active compensation}
+  \label{fig:cg2}
+\end{figure}
+
+
 
 \section{Environmental Impact}
-Data on how ambient conditions affected the link quality during your tests.
+As mentioned in Baseline performance case during the measurement at the end it was raining. 
+In the figure \ref{fig:cg4}, the last 300 seconds are presented, when the heavy rain was affecting the link quality.
 
+Throughout the measurement there is strong variation visible at the moments of rain, even dropping the output power temporarily to 0uW.
+Sometimes the beam was affected in the other way, spiking the received power of Master transcevier to 600uW.
+
+This case shows how dense amount of droplets of water might even block the connection, cousing loss of packets which decrease the throughput.
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(4).png}
+  \caption[short]{Heavy rain effects on received power}
+  \label{fig:cg4}
+\end{figure}
+
+\newpage
+
+There was another measurement in rainy day. It is 4000 second measurement starting from relativly low 50uW received power in Master and 30uW in Slave.
+The measurements in this time were effected by heavy rain with strong wind.
+The results shows that Master received power changed from 50 to even above 200uW.
+Those results showcased moments, where received power dropped down to 0uW and at the end the link fully destabilize.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(3).png}
+  \caption[short]{Environment}
+  \label{fig:cg3}
+\end{figure}
+
+\newpage
 \section{Discussion}
-An honest evaluation of your system's stability, limitations of the 3D-printed mechanics, and the speed bottleneck of polling DDM data.
+%An honest evaluation of your system's stability, limitations of the 3D-printed mechanics, and the speed bottleneck of polling DDM data.
+The results of Active Compensation in comparision to baseline performance, shows positive results - the received power metric was controlled at kept at good level.
+There are some nuances that can be taken in consideration while improving the overall performance.
+Currently the transcevier is optimizing the received power of itself, but refined verison would be optimize the sum of both received powers.
+Biggest bottleneck of the system is the DDM polling data frequency, 15ms makes a transceviers appropiate for not moving applications.
+If there was an intention to apply this communication at drone to vehicle communication, the update would be too slow and would require other input data to base compensation on. 
+Also such application would require much higher range of motion. The current mechanics could be a nice base for "fine" steering in such system were "coarse" steering would be at the base of transcevier.
+
+Overally the 3D printed mechanics and the steppers motors give nice stability for "last mile" applications, allowing for high throughput secure connections where it's impossible or too expensive to lay fiber. 
+This is also a pretty good base which could be extended for more advanced application, which would run real time tracking, but that would require to swap current SFP module for custom electronics, allowing for faster data harvest.
 
 
 \chapter{Conclusion and Future Work}
-
+This chapter will conclude the work that is described in this thesis and will speculate about possible improvements of the device.
 \section{Summary of Achievements}
-A review of the project, confirming whether you met the objectives outlined in Chapter 1.
+%A review of the project, confirming whether you met the objectives outlined in Chapter 1.
+The project was done successfully, acording to the Thesis Objective. 
+The design and produced transcevier in deed is capable of 1Gb high throughput transmission.
+Two of such transceviers were used to create functional FSO link.
+It was created using widely available components and 3D printed structure. 
+The active misalignment compensation is shown to be working, improving the alligment in changing environment.
+The research was conducted, thus the impact of outdoor environment with changing weather condition was tested.
+
+The result device came in as a complete structure, solving the issues, that were to be solved.
+Each part, electical, firmware, mechanics and the optics are cooperating with each other in a intended way.
 
 \section{Future Work}
-What could be improved in future iterations? (e.g., faster motors, different optics, machine learning for predictive tracking).
+%What could be improved in future iterations? (e.g., faster motors, different optics, machine learning for predictive tracking).
 
+FSO transcevier and the link is a task that can be done in various ways, according to the needed application.
+The transcevier described by this document aims to be applied in "Last mile" scenarios.
 
+In such use case used compnents like SFP modules, are sufficient to connecting two buildings together. 
+Although the low data refresh in DDM technology bottlenecks the possibilites of compensating different environmental factors.
+With current application the link is capable of reducing the slow paced changes, like thermal expansion of the builidngs and the device itself.
+In higher distances this might start to be an issue where those fast paced vibrations or wind swings might lead to big packet losses.
+So the first improvement to make such transcevier greater, would be desiging it's own circiut of receiver and transmitter, which would allow for faster readouts of received power.
 
+Another thing that could be upgraded are mechanics, more exactly would be changing the 3d printed guides with proper precise guide rail, which would eliminate the loose movements and decrease the friction.
+Current movements of the transcevier, are also far to long in tens of centimires, limited to one centimeter range by the end switches. 
+Limiting it by design will reduce the amount of materials used in production, including filament and the lead screw. 
+The production time would also be reduced by shorter 3D print times. 
+The last thing regarding the mechanics, would be sealed waterproof casing of the transcevier, that would allow for proper application.
 
+The last thing that would improve the device, would be beacon light source, that would allow for link set up without human interaction. 
+Such light paired with couple photodiodes, would make the set up faster, but also would open the new possibilites of automatic link recovery in case of total link degradation.
+
+At the end there are many little things that could be done differently or better, but those that were pointed out are the key things that would be next to improve, to make this transcevier far greater device.
 
 
 
@@ -653,7 +864,7 @@ What could be improved in future iterations? (e.g., faster motors, different opt
 
 % First appendix: Landscape schematic
 \newgeometry{left=1cm, right=1cm, top=0.5cm}
-\appendixsection{ADC Board Schematic}
+\appendixsection{Bill of Materials}
 Nah
 
 % First appendix: Landscape schematic
