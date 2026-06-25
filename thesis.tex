@@ -111,7 +111,7 @@
 \setlength{\parindent}{1.5em}
 \indent W niniejszej pracy przedstawono realizacje autorskiego, szybko przepustowego łącza optycznego w wolnej przestrzeni z aktywną kompensacją nachylenia wiązki. Na jego potrzebę opisano architekturę i wykonanie autorskich urządzeń nadawczo-odbiorczych, wykonanych z przystępnych cenowo i szeroko dostępnych elementów na rynku, między innymi modułów SFP.
 Urządzenia te zaprojektowano z myślą o szerokim wykorzystaniu technologii druku 3D. 
-Omówione zostały również badania tego łącza optycznego, porównano wydajność przy wyłączonej i włączonej kompensacji wiązki oraz wpływ różnych warunków atmosferycznych na komunikację optyczną w wolnej przestrzeni. 
+Omówione zostały również badania tego łącza optycznego, porównano wydajność przy wyłączonej i~włączonej kompensacji wiązki oraz wpływ różnych warunków atmosferycznych na komunikację optyczną w wolnej przestrzeni. 
 Na koniec przedstawiono rozważania na temat przyszłego rozwoju projektu. 
 }
 % Niniejsza praca opisuje architekturę i realizacje autorskiego optycznego aparatu nadawczo-odbiorczego, wykonanego z przystępno cenowych szeroko dostepnych elementów.
@@ -208,8 +208,8 @@ Completing such connection is challenging because it requires knowledge of multi
 \section{Thesis Objectives}
 %Clearly state your goal to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
 The goal of this thesis is to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
-This will be achieved by using  readily available SFP modules and a custom-built mechanical system for beam steering, controlled by a microcontroller that reads the \ac{DDM} data from the SFP module to maintain optimal alignment.
-The implemented link will be used as a platform to analyze practical issues induced by environmental factors. 
+This will be achieved by using  readily available SFP modules and a custom-built mechanical system for beam steering, controlled by a~microcontroller that reads the \ac{DDM} data from the SFP module to maintain optimal alignment.
+The implemented link will be used as a~platform to analyze practical issues induced by environmental factors. 
 
 Ultimately, this thesis demonstrates that the integration of \ac{COTS} electronic components with custom 3D-printed mechanics provides a viable and highly adaptable framework for developing operational free-space optical (FSO) communication links.
 
@@ -242,7 +242,7 @@ It consists of radiating element, which is usually a laser diode, a laser modula
 
 Modulation is essential in an optical transmitter. 
 It allows data to be embedded into a light beam that then travels a significant distance to the receiver.
-The easiest way of modulating an optical signal is using direct modulation - changing an injection current of a laser diode, which affects the output optical power. 
+The easiest way of modulating an optical signal is using direct modulation - changing an injection current of a~laser diode, which affects the output optical power. 
 In this way, on-off binary modulation can be achieved, more widely known as \ac{OOK}\cite{hui2025introduction}.
 OOK simply trun on the light source to transmit a logic "one" and turns it off to transmit a "zero". 
 There are two types of OOK which are \ac{NRZ} and \ac{RZ}. 
@@ -442,7 +442,7 @@ There are circles placed in the corners to eliminate the jamming of the sharp ed
 % \end{figure}
 
 \newpage
-Mechanical movement was limited to a 10mm x 10mm range of movement parallel to the lens by end switches. Such a range gives quite a large range of motion, so it made a low range tests a bit easier.
+Mechanical movement was limited to a 10mm x 10mm range of movement parallel to the lens by end switches. Such a range gives quite a large range of motion, so it made a~low range tests a bit easier.
 The final CAD model of the mechanical structure is provided in Appendix \ref{appendix:CAD} and manufactured transceiver is shown in the following figures \ref{Fig7:tr0}, \ref{Fig7:tr1}, \ref{Fig7:tr2}, \ref{Fig7:tr3}. 
 
 In figure \ref{Fig7:tr0}, the frontal photography of the transceiver is shown. From here, the bearing for the X axis (Movement perpendicular to the lens) is visible, labeled "1". On the right side there are "Iron sights" aligned, marked "2", used to aim at the other transceiver.
@@ -773,7 +773,7 @@ The diagram is shown in the figure \ref{fig:env_test}. Between buildings, rain a
   \label{fig:env_test}
 \end{figure}
 
-In figure \ref{fig:pair}, a pair of transceivers are shown, These devices were used during a measurements. Black transceiver served as master, which was connected to the SBC computer - Rasbperry Pi4, that allowed for remote collection of data.
+In figure \ref{fig:pair}, a pair of transceivers are shown, These devices were used during a~measurements. Black transceiver served as master, which was connected to the SBC computer - Rasbperry Pi4, that allowed for remote collection of data.
  \begin{figure}[H]
   \centering
   \includegraphics[width=.6\textwidth]{figures/manufactured pair.jpg}
@@ -917,7 +917,7 @@ This chapter will conclude the work described in this thesis and speculate about
 \section{Summary of Achievements}
 %A review of the project, confirming whether you met the objectives outlined in Chapter 1.
 The project was carried out successfully according to the objective of the thesis. 
-A stable and high throughput optical link was design and produced, capable of 1Gbs transmission over tens of meters.
+A~stable and high throughput optical link was design and produced, capable of 1Gbs transmission over tens of meters.
 It was achieved by using readily available and standardized components.
 The prototype devices produced were used as a platform to analyze the influence of weather conditions on link quality.
 Also the performance of active control algorithm was evaulated.

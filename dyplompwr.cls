@@ -1,190 +1,267 @@
+%Szablon pracy dyplomowej poprawiony i zmodyfikowany na potrzeby wydziału Elektroniki, Mikrosystemów i Fotoniki Politechniki Wrocławskiej
+
+%plik dyplompwr.cls wystarczy umieścić w katalogu zawierającym plik główny pracy .tex
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{dyplompwr}
 
-% In accordance with: https://wefim.pwr.edu.pl/en/students/studia-1-i-2-stopnia/dyplomanci/zasady-edytowania-pracy
-% And:                https://wefim.pwr.edu.pl/studenci/studia-1-i-2-stopnia/dyplomowanie/zasady-edytowania-pracy
-
+% Inicjalizacja opcji
+\newif\if@archive
+\newif\if@oneside
 \newif\if@engineer
 \newif\if@master
+\newif\if@eng
+\newif\if@pl
+\newif\if@old
+
 \@mastertrue
-
-\DeclareOption{master}{\@mastertrue\@engineerfalse}
+\@archivetrue
+\@pltrue
+\DeclareOption{archive}{\@archivetrue\@onesidefalse}
+\DeclareOption{oneside}{\@onesidetrue\@archivefalse}
 \DeclareOption{engineer}{\@engineertrue\@masterfalse}
-
-% can be used as follows:
-% \documentclass[master,oneside,en,oldtitlepage]{dyplompwr}
-% \documentclass[engineer,oneside,en,oldtitlepage]{dyplompwr}
-\DeclareOption{oneside}{}
-\DeclareOption{en}{}
-\DeclareOption{oldtitlepage}{}
-
+\DeclareOption{master}{\@mastertrue\@engineerfalse}
+\DeclareOption{enold}{\@engtrue\@plfalse}
+\DeclareOption{en}{\@engtrue\@plfalse}
+\DeclareOption{pl}{\@pltrue\@engfalse}
+\DeclareOption{oldtitlepage}{\@oldtrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{mwrep}}
-\ProcessOptions\relax
+\ProcessOptions
 
-% Base class
-\LoadClass[12pt]{mwrep}
+% Wczytywanie klasy bazowej -- mwrep -- wraz z odpowiednią interlinią i marginesami
+\if@archive
+	\LoadClass[12pt,openany,twoside]{mwrep}
+	\RequirePackage[a4paper,outer=2cm,inner=3.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+% Interlinia jest ustawiana na 1
+	\RequirePackage[singlespacing]{setspace}
+\fi
 
-% Page layout for oneside
-\RequirePackage[a4paper,top=2.54cm,left=2.54cm,right=2.54cm,bottom=2.54cm]{geometry}
-\RequirePackage[onehalfspacing]{setspace}
+\if@oneside
+	\LoadClass[12pt]{mwrep}
+	\RequirePackage[a4paper,top=2.5cm,left=3.5cm,right=2.5cm,bottom=2.5cm]{geometry}
+% Zmieniamy interlinię na 1.5 dla poprawienia przejrzystości
+	\RequirePackage[onehalfspacing]{setspace}
+\fi
 
-\RequirePackage[T1]{fontenc}
-\RequirePackage{lmodern}
+%%		Wymagane pakiety
 \RequirePackage{graphicx}
 
-% English labels
-\renewcommand{\figurename}{Fig.}
-\renewcommand{\tablename}{Tab.}
+\RequirePackage[ddmmyyyy]{datetime}
+% standardowy font, ładowany dla pewności
+\RequirePackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+% to na potrzeby strony tytułowej
+\RequirePackage{xcolor}
+\def\ifundefined#1{\expandafter\ifx\csname#1\endcsname\relax}
 
-% Thesis type
-\def\xd{Supervisor: }
-\if@master
-  \def\thesisheader{Master Thesis}
-\fi
-\if@engineer
-  \def\thesisheader{Bachelor Thesis}
+%%		Opcje językowe na potrzeby strony tytułowej
+\if@pl
+	\def\xd{Promotor: }
+	\if@master
+		\def\thesisheader{PRACA DYPLOMOWA \\ MAGISTERSKA}
+	\fi
+	\if@engineer
+		\def\thesisheader{PRACA DYPLOMOWA \\ IN\.{Z}YNIERSKA}
+	\fi
 \fi
 
-% Metadata used on title page
+
+\if@eng
+	\def\xd{Supervisor: }
+	\if@master
+		\def\thesisheader{Master Thesis}
+	\fi
+	\if@engineer
+		\def\thesisheader{Bachelor Thesis}
+	\fi
+
+\fi
+
+%%		Strona tytułowa
 \def\supervisor#1{\gdef\@supervisor{#1}}
+\def\consultant#1{\gdef\@consultant{#1}}
 \def\city#1{\gdef\@city{#1}}
 \def\year#1{\gdef\@year{#1}}
+\def\dedication#1{\gdef\@dedication{#1}}
+\def\@supervisor{\@latex@error{No \noexpand\supervisor given}\@ehc}
 \def\fieldofstudy#1{\gdef\@fieldofstudy{#1}}
 \def\speciality#1{\gdef\@speciality{#1}}
 \def\faculty#1{\gdef\@faculty{#1}}
+\def\keywords#1{\gdef\@keywords{#1}}
+\def\@keywords{\@latex@error{No \noexpand\keywords given}\@ehc}
+\def\abstract#1{\gdef\@abstract{#1}}
+\def\@abstract{\@latex@error{No \noexpand\abstract given}\@ehc}
+\def\titlen#1{\gdef\@titlen{#1}}
+\def\@titlen{\@latex@error{No \noexpand\titlen given}\@ehc}
 
-\def\@supervisor{\@latex@error{No \noexpand\supervisor given}\@ehc}
-\def\@city{\@latex@error{No \noexpand\city given}\@ehc}
-\def\@year{\@latex@error{No \noexpand\year given}\@ehc}
-\def\@fieldofstudy{\@latex@error{No \noexpand\fieldofstudy given}\@ehc}
-\def\@speciality{\@latex@error{No \noexpand\speciality given}\@ehc}
-\def\@faculty{\@latex@error{No \noexpand\faculty given}\@ehc}
+\consultant{}
 
-\newcommand{\TitleLine}[1]{%
-  \noindent\makebox[\textwidth][c]{#1}\par
+\if@pl
+	\RequirePackage{polski}
+	\renewcommand{\figurename}{Rys.}
+	\renewcommand{\tablename}{Tab.}
+\fi
+\if@eng
+	\renewcommand{\figurename}{Fig.}
+	\renewcommand{\tablename}{Tab.}
+\fi
+
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{0ex}
+   {-3.25ex plus -1ex minus -0.2ex}
+   {1.5ex plus 0.2ex}
+   {\normalfont\normalsize\itshape}}
+
+
+\renewcommand\maketitle{
+
+    \begin{titlepage}
+        \newgeometry{left=25mm,right=25mm,top=25mm,bottom=25mm}
+        \pagenumbering{alph}
+
+        \begin{center}
+
+            % --- Nazwa uczelni (trochę mniejsza) ---
+            {\fontsize{20pt}{22pt}\fontfamily{ptm}\selectfont\bfseries
+            \if@pl Politechnika Wroc\l{}awska \fi
+            \if@eng Wroc\l{}aw University of Science and Technology \fi
+            \par}
+
+            \vspace{1mm}
+
+            % --- Wydział (wyraźnie większy i pogrubiony) ---
+            {\fontsize{18pt}{20pt}\fontfamily{ptm}\selectfont
+            \@faculty \par}
+
+            \vspace{2mm}
+            \rule{0.9\textwidth}{0.3pt}
+
+            \vspace{10mm}
+
+            % --- Kierunek (bez caps locka) ---
+            {\fontsize{17pt}{17pt}\selectfont
+             \if@pl Kierunek: \fi
+             \if@eng Field of study: \fi
+             \@fieldofstudy \par}
+
+             \vspace{0.5mm}
+
+             {\fontsize{16pt}{16pt}\selectfont
+             \if@pl Specjalność: \fi
+             \if@eng Speciality: \fi
+             \@speciality \par}
+
+            \vspace{15mm}
+
+            % --- Typ pracy – CAPS LOCK (tekst w \thesisheader już caps) ---
+            {\fontsize{28pt}{30pt}\selectfont\bfseries
+             \thesisheader\par}
+
+            \vspace{20mm}
+
+            % --- Tytuł ---
+            {\fontsize{18pt}{20pt}\selectfont
+            \if@pl Tytu\l{} pracy: \fi
+            \if@eng Title of Thesis: \fi
+            \par}
+
+            \vspace{3mm}
+
+            {\fontsize{22pt}{22pt}\selectfont\bfseries
+            \@title \par}
+
+            % --- Autor (niżej) ---
+            \vspace{35mm}
+
+            {\fontsize{18pt}{20pt}\selectfont
+            \if@pl {AUTOR:} \fi
+            \if@eng {AUTHOR:} \fi
+            \par}
+
+            \vspace{2mm}
+
+            {\fontsize{16pt}{18pt}\selectfont
+            \@author \par}
+
+            \vspace{12mm}
+
+            % --- Promotor / Supervisor ---
+            {\fontsize{18pt}{20pt}\selectfont
+            \if@pl {OPIEKUN:} \fi
+            \if@eng {SUPERVISOR:} \fi
+            \par}
+
+            \vspace{2mm}
+
+            {\fontsize{16pt}{18pt}\selectfont
+            \@supervisor \par}
+
+            \vfill
+
+            \rule{0.9\textwidth}{0.3pt}
+
+            \vspace{3mm}
+
+            {\fontsize{16pt}{18pt}\fontfamily{ptm}\selectfont
+            {\@city\ \@year}\par}
+
+        \end{center}
+
+        \cleardoublepage
+    \end{titlepage}
+
+    \restoregeometry
+    \pagenumbering{arabic}
 }
 
-\newcommand{\TitleBlock}[2]{%
-  \noindent\makebox[\textwidth][c]{%
-    \parbox{#1}{\centering #2}%
-  }\par
+
+
+
+%wymuszenie ukrywania rozdziałów w spisie treści
+\renewcommand*\chapter@toc{%
+  \ifHeadingNumbered\typeout{\@chapapp\space\thechapter.}
+  \addcontentsline{toc}{chapter}{%
+        \ifHeadingNumbered
+ \protect\numberline{\mw@seccntformat{\HeadingNumber}}%
+        \fi
+            \HeadingTOCText}\fi%
+  \addtocontents{lof}{\protect\addvspace{10\p@}}%
+  \addtocontents{lot}{\protect\addvspace{10\p@}}%
+  }
+%
+
+% Wymusza jednopoziomowe numerowanie tabel rysunków i wzorów.
+% W przypadku chęci powrotu do domyślengo wielopoziomowego numerowania usunąć poniższe linie.
+\newcommand{\oneLevelNumbering}{
+	\usepackage{chngcntr}
+	\counterwithout{figure}{chapter}
+	\counterwithout{table}{chapter}
+	\counterwithout{equation}{chapter}
 }
+%
 
-\renewcommand\maketitle{%
-  \begin{titlepage}
-    \newgeometry{left=25.4mm,right=25.4mm,top=12.5mm,bottom=12.5mm}
-    % \pagenumbering{alph}
-    \pagenumbering{roman}
-    \thispagestyle{empty}
+% wymuszenie numeru strony po prawej
+\newcommand{\pageNumberOnTheRight}{
+	\RequirePackage{fancyhdr}
+	\pagestyle{fancy}
+	\if@oneside
+		\fancyhf{}\fancyfoot[R]{\thepage}
 
-    \vspace*{-4mm}
+		\fancypagestyle{opening}{\fancyhf{}\fancyfoot[R]{\thepage}
+			\renewcommand{\headrulewidth}{0pt}
+			\renewcommand{\footrulewidth}{0pt}}
+		\fancypagestyle{closing}{\fancyhf{}\fancyfoot[R]{\thepage}%
+			\renewcommand{\headrulewidth}{0pt}
+			\renewcommand{\footrulewidth}{0pt}}
+	\else
+		\fancyhf{}\fancyfoot[RO,LE]{\thepage}
 
-    \TitleLine{%
-      {\fontsize{20pt}{20pt}\selectfont\fontfamily{ptm}\selectfont
-      \textbf{Wroc\l{}aw University of Science and Technology}}%
-    }
-
-    \vspace{1mm}
-
-    \TitleLine{%
-      {\fontsize{18pt}{18pt}\selectfont\fontfamily{ptm}\selectfont
-      \@faculty}%
-    }
-
-    \vspace{1mm}
-    \noindent\rule{\textwidth}{0.5mm}
-
-    \vspace{14mm}
-
-    \TitleLine{%
-      {\fontsize{17pt}{17pt}\selectfont\fontfamily{ptm}\selectfont
-      Field of study: \@fieldofstudy}%
-    }
-
-    \vspace{2mm}
-
-    \TitleLine{%
-      {\fontsize{16pt}{16pt}\selectfont\fontfamily{ptm}\selectfont
-      Speciality: \@speciality}%
-    }
-
-    \vspace{24mm}
-
-    \TitleBlock{140mm}{%
-      \onehalfspacing
-      {\fontsize{28pt}{28pt}\selectfont\fontfamily{ptm}\selectfont
-      \textbf{\thesisheader}}%
-    }
-
-    \vspace{38mm}
-
-    \TitleBlock{140mm}{%
-      \onehalfspacing
-      {\fontsize{18pt}{18pt}\selectfont\fontfamily{ptm}\selectfont
-      Title of Thesis:\\[4mm]
-      \fontsize{20pt}{20pt}\textbf{\@title}}%
-    }
-
-    \vspace{40mm}
-
-    \TitleLine{%
-      {\fontsize{18pt}{18pt}\selectfont\fontfamily{ptm}\selectfont
-      AUTHOR:}%
-    }
-
-    \vspace{5mm}
-
-    \TitleBlock{140mm}{%
-      \onehalfspacing
-      {\fontsize{16pt}{16pt}\selectfont\fontfamily{ptm}\selectfont
-      \@author}%
-    }
-
-    \vspace{16mm}
-
-    \TitleLine{%
-      {\fontsize{18pt}{18pt}\selectfont\fontfamily{ptm}\selectfont
-      SUPERVISOR:}%
-    }
-
-    \vspace{5mm}
-
-    \TitleBlock{140mm}{%
-      \onehalfspacing
-      {\fontsize{16pt}{16pt}\selectfont\fontfamily{ptm}\selectfont
-      \@supervisor}%
-    }
-
-    \vspace{15mm}
-
-    \noindent\rule{\textwidth}{0.5mm}
-
-    \vspace{4mm}
-
-    \TitleLine{%
-      {\fontsize{18pt}{18pt}\selectfont\fontfamily{ptm}\selectfont
-      \@city\ \@year}%
-    }
-
-  \end{titlepage}
-
-  \restoregeometry
-  \setcounter{footnote}{0}
-  \global\let\thanks\relax
-  \global\let\maketitle\relax
-  \global\let\@thanks\@empty
-  \global\let\@author\@empty
-  \global\let\@date\@empty
-  \global\let\@title\@empty
-  \global\let\@faculty\@empty
-  \global\let\@supervisor\@empty
-  \global\let\title\relax
-  \global\let\author\relax
-  \global\let\date\relax
-  \global\let\and\relax
-  \global\let\faculty\relax
-  \global\let\supervisor\relax
-  \pagenumbering{arabic}
+		\fancypagestyle{opening}{\fancyhf{}\fancyfoot[RO,LE]{\thepage}
+			\renewcommand{\headrulewidth}{0pt}
+			\renewcommand{\footrulewidth}{0pt}}
+		\fancypagestyle{closing}{\fancyhf{}\fancyfoot[RO,LE]{\thepage}%
+			\renewcommand{\headrulewidth}{0pt}
+			\renewcommand{\footrulewidth}{0pt}}
+	\fi
 }
 
 \endinput
