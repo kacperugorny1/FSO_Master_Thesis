@@ -31,6 +31,8 @@
 \usepackage{pdflscape}                  % For landscape Packages
 \usepackage{listings}
 \usepackage{pdfpages}
+\usepackage{booktabs}
+\usepackage{makecell}
 \usepackage{tabularx}
 % =================== End Packages ===================
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO: #1}}}
@@ -107,10 +109,14 @@
 \vspace{8pt}
 {\fontsize{16pt}{18pt}\selectfont
 \setlength{\parindent}{1.5em}
-\indent Niniejsza praca opisuje architekturę i realizacje autorskiego optycznego aparatu nadawczo-odbiorczego, wykonanego z przystępno cenowych szeroko dostepnych elementów.
-Przy użyciu dwóch takich apartów możliwe jest stworzenie wysoko przepustowego łącza optycznego z aktywną kompensacją, co zostało opisane w pracy.
-Opisane zostały również badania takowego łącza wraz z wnioskami i możliwym kierunkiem rozwoju pracy.
+\indent W niniejszej pracy przedstawono realizacje autorskiego, szybko przepustowego łącza optycznego w wolnej przestrzeni z aktywną kompensacją nachylenia wiązki. Na jego potrzebę opisano architekturę i wykonanie autorskich urządzeń nadawczo-odbiorczych, wykonanych z przystępnych cenowo i szeroko dostępnych elementów na rynku, między innymi modułów SFP.
+Urządzenia te zaprojektowano z myślą o szerokim wykorzystaniu technologii druku 3D. 
+Omówione zostały również badania tego łącza optycznego, porównano wydajność przy wyłączonej i włączonej kompensacji wiązki oraz wpływ różnych warunków atmosferycznych na komunikację optyczną w wolnej przestrzeni. 
+Na koniec przedstawiono rozważania na temat przyszłego rozwoju projektu. 
 }
+% Niniejsza praca opisuje architekturę i realizacje autorskiego optycznego aparatu nadawczo-odbiorczego, wykonanego z przystępno cenowych szeroko dostepnych elementów.
+% Przy użyciu dwóch takich apartów możliwe jest stworzenie wysoko przepustowego łącza optycznego z aktywną kompensacją, co zostało opisane w pracy.
+% Opisane zostały również badania takowego łącza wraz z wnioskami i możliwym kierunkiem rozwoju pracy.
 \end{minipage}
 
 \vspace*{0.04\textheight}
@@ -121,9 +127,9 @@ Opisane zostały również badania takowego łącza wraz z wnioskami i możliwym
 \vspace{8pt}
 {\fontsize{16pt}{18pt}\selectfont
 \setlength{\parindent}{1.5em}
-\indent This paper describes the architecture and implementation of a custom-designed optical transceiver, constructed from affordable, widely available components. 
-Using two such transceivers, it is possible to establish a high-throughput optical link with active compensation, what have been described in the thesis. 
-The testing of this link is also described, along with the conclusions and possible directions for future work.
+\indent This paper presents the implementation of a custom, high-throughput free-space optical link featuring active beam tilt compensation. To support this system, the architecture and construction of custom transceivers are described. These devices were built using affordable, commercially off-the-shelf components, including SFP modules, and were designed with a strong focus on utilizing 3D printing technology. 
+Furthermore, the testing and evaluation of the optical link are discussed, performance of the link with and without beam compensation was compared and influence of weather conditions on free space optical communication. 
+At the end considerations for the future development of the project are showcased.
 }
 \end{minipage}
 
@@ -158,6 +164,8 @@ The testing of this link is also described, along with the conclusions and possi
     \acro{SFP}{Small Form-factor Pluggable}
     \acro{EMA}{Exponetial Moving Average}
     \acro{BOM}{Bill of Materials}
+    \acro{WDM}{Wavelength Division Multiplexing}
+    \acro{COTS}{Commercial Off-The-Shelf} 
     
 \end{acronym}
 % ============= End Acronyms ==================
@@ -174,9 +182,10 @@ Classic \ac{RF} systems, although widely used, might not satisfy the needs of al
 However, there might be a situation where the fiber is also too expensive or simply too difficult to install.
 
 \ac{FSO} communication might meet the requirements that RF lacks and gather the most demanding users. 
-Using a precisely focused light beam, this solution not only exceeds RF solutions in terms of throughput, but also provides great security, by high directivity and difficulty of hijacking the signal.
+Using a precisely focused light beam, this solution can exceed RF solutions in terms of throughput, but also provides great security, by higher directivity and  difficulty of hijacking the signal. Those characteristics make FSO systems a highly competitive answer to the need for private high throughput connections\cite{trichili2020roadmap}. 
 
-Those characteristics make FSO systems a highly competitive answer to the need for private high throughput connections\cite{trichili2020roadmap}.
+FSO is still being improved, despite having many advanced solutions, which are thoroughly described in academic papers, for exmaple Deep Space Optical Communications (DSOC), that allows for over 2AU distance and over 200Mbs throughput transmission \cite{driscoll2020deep}. 
+On the other hand there are also new solutions, that are dedicated for ground to ground applications, that utilize use of off-shelf components like SFP modules \cite{selfhealacademic}, \cite{mustafa2016fso}, \cite{abadi2019implementation}.
 \section{Background}
 % Brief introduction to Free Space Optical (FSO) communication and its advantages (high speed, license-free).
 %Free space optical communication bases on transmitting data through the air using light source, typically a laser, which is detected on the other end by the photodiode.
@@ -188,7 +197,7 @@ The fundamental requirement of a well functioning free space optical link is mai
 RF systems, on the other hand, diverge and bounce the obstacles or even pass through them and still can reach the destination.
 Ideally FSO systems, keep the transmitted beam collimated, which allows to achieve high power density and security of transmission at the expense of need for keeping precise alignment.
 In practical deployments, it is a challenging task because of environmental factors such as vibrations, thermal expansion, or atmospheric conditions.
-That is why modern FSO systems are required to run advanced tracking and compensating systems.
+That is why modern FSO systems are required to actively compensate movements of laser beam and its position.
 
 
 \section{Motivation}
@@ -198,27 +207,37 @@ Completing such connection is challenging because it requires knowledge of multi
 
 \section{Thesis Objectives}
 %Clearly state your goal to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
-The goal of this thesis is to design and develop a stable, affordable, high-speed FSO Ethernet link with active misalignment compensation.
-This will be achieved by using inexpensive and readily available SFP modules and a custom-built mechanical system for beam steering, controlled by a microcontroller that reads the \ac{DDM} data from the SFP module to maintain optimal alignment.
-The realization of this link will be used as a platform to analyze practical issues induced by environmental factors. 
+The goal of this thesis is to design and develop a stable, high-speed FSO Ethernet link with active misalignment compensation.
+This will be achieved by using  readily available SFP modules and a custom-built mechanical system for beam steering, controlled by a microcontroller that reads the \ac{DDM} data from the SFP module to maintain optimal alignment.
+The implemented link will be used as a platform to analyze practical issues induced by environmental factors. 
+
+Ultimately, this thesis demonstrates that the integration of \ac{COTS} electronic components with custom 3D-printed mechanics provides a viable and highly adaptable framework for developing operational free-space optical (FSO) communication links.
+
 \section{Scope and Structure}
 %A brief roadmap of the thesis document.
-The rest of the document will provide information and knowledge about the theoretical background of FSO communication, the design and architecture of the system, the control algorithm used for active alignment, the experimental methodology, and finally the results and analysis of the project.
-In the end conclusions will be drawn, and it will be stated what was not optimal in the solution taken and what should be done to improve the solution.
+This thesis focuses on the design, implementation, and evaluation of an active beam steering and alignment system for FSO communication. The scope describes the development of hardware and software solutions capable of sustaining and maintaining an optimal optical link. It explains the usage of SFP modules and the use of their built in DDM technology to extract real-time received power data. The practical work includes the mechanical kinematic stage and optical design of the transceiver, the development of a custom controller and the programming of nessecery algorithms, such as spiral search and power alignment.
+Furthermore, the scope includes experimental verification of the proposed system to evaluate its performance.
+
+
+% The rest of the document will provide information and knowledge about the theoretical background of FSO communication, the design and architecture of the system, the control algorithm used for active alignment, the experimental methodology, and finally the results alongside the analysis of the project.
+% In the end conclusions will be drawn, and it will be stated what was not optimal in the solution taken and what should be done to improve the solution.
 
 
 
 \chapter{Theoretical Background and State of the Art}
 % Before showing your work, you need to prove you understand the physics and existing technology.
-As was stated in the introduction, the task of creating a transceiver and then establishing the link is quite challenging because of involvement of multiple scientific fields, such as:
-precise mechanics, optics systems, electronics, motor control and low level firmware developing.
-This chapter will showcase how such systems are working to give the reader a concise understanding of issues that need to be overcome later in development.
+
+The need for communication and exchange of information is an important factor for human species for thousands of years, accelerating the growth of civilization. In the span of the centuries, methods of exchanging data have evolved from simple visual and sound signals, to first telegraphic and radio systems. The main breakthrough happened in the XX and XXI centuries, because of rapid digitalization, thanks to which time and distance stopped to be a barrier. Today, a fundamental medium on top of which our information exchange systems are built is optical fiber that allows to send encoded information in form of light into the cable. This chapter will introduce the essence of this technology and discuss in detail the principles of operation of fiber optic systems and how it can be applied in FSO communication.
+
+\section{Current Research Directions}
+Today, FSO transmission is being developed in couple directions, but most exciting are space applications. There are studies on optical inter satellite links, which allow for far higher throughput at lower power than RF and especially pronounced security \cite{ingersoll2020technical}. There are also studies on modeling the atmospheric channel in ground to satellite communication, which are about to help in the future to implement such optical links \cite{Czerwinskietal2025}.
 
 
 \section{Principles of FSO Communication}
 %How optical data links work and their general architecture.
-Generally, an FSO link is a set of two components: a transmitter and a receiver. 
-The transmitter sends data signals in free space using modulated optical radiation. 
+
+Generally, a FSO link is a set of two components: a transmitter and a receiver. 
+The transmitter sends data signals free space using modulated optical radiation. 
 It consists of radiating element, which is usually a laser diode, a laser modulator, and a set of optics responsible for creating a beam \cite{majumdar2014fundamentals}.
 
 Modulation is essential in an optical transmitter. 
@@ -227,60 +246,80 @@ The easiest way of modulating an optical signal is using direct modulation - cha
 In this way, on-off binary modulation can be achieved, more widely known as \ac{OOK}\cite{hui2025introduction}.
 OOK simply trun on the light source to transmit a logic "one" and turns it off to transmit a "zero". 
 There are two types of OOK which are \ac{NRZ} and \ac{RZ}. 
-As its name suggests, an RZ totally turns off the transmitter and an NRZ goes down to some level of output power.
-RZ has the advantage of higher sensitivity\cite{henniger2010introduction}.
+RZ version of the OOK simply encodes logic "one" as high amplitude followed by low amplitude, where NRZ does not return to low value, as shown in the figure \ref{fig:mod}. 
+RZ has the advantage of higher sensitivity, but both modulations might lead to clock desynchronization during multiple zeros transmitted in a row \cite{henniger2010introduction}. OOK is proven to be working in FSO systems as it is used in other implementations \cite{yang2016free}.
+ 
 
-The modulated light beam now enters an optical system that often consists of a telescope or a collimator, making the light beam capable of traveling long distances.
+ \begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/modulations.png}
+  \caption[short]{OOK modulations}
+  \label{fig:mod}
+\end{figure}
+
+
+In order to increase the throughput of the network, \ac{WDM} is used. Instead of using one wavelength of the light to send data, multiple wavelengths are sent in the same optical channel as shown in figure \ref{fig:wdm1}. Different colors of the light do not affect each other and thanks to that properties, the overall throughput can be multiplied up to tens of Terabits \cite{arumugam2001optical}.
+
+ \begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/wdm1.png}
+  \caption[short]{WDM operation diagram. Source: \cite{ascentoptics_wdm}}
+  \label{fig:wdm1}
+\end{figure}
+
+Depending on how dense the wavelength channels are "packed" in the spectrum, this technology is called CWDM or DWDM as shown in figure \ref{fig:wdm2}.
+
+ \begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/wdm2.png}
+  \caption[short]{CWDM and DWDM. Source: \cite{ascentoptics_what_is_dwdm}}
+  \label{fig:wdm2}
+\end{figure}
+
+The modulated and multiplexed light beam now enters an optical system that often consists of a telescope or a collimator, which makes the light beam capable of traveling long distances.
 This signal needs to travel through an open space to the receiver.
 Line of sight between the transmitter and receiver is required.
-There are many factors that influence the path of the light, some directly like weather conditions and others indirectly like vibrations, wind, or thermal expansion.
+There are many factors that influence the path of the light, some directly like weather conditions and others indirectly such as vibrations, wind, or thermal expansion.
 Taking these into account, tracking systems must be applied\cite{bloom2002physics}, \cite{khalighi2014survey}.
 
 When the beam reaches it's destination, it enters the optic systems, which focuses it at the photodiode, which converts light into an electrical signal.
 Then the signal is demodulated and the data is received at the other end of the link.
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/Simple_fso_diagram.jpg}
-    \caption[short]{Example FSO system}
-    \label{fig1:scheme}
+\section{Impact of envirometnal factors on light propagation}
+The design and implementation of FSO systems require a solid background on the environmental factors that impact light propagation. Key examples include \cite{malik2015free}:
+\begin{itemize}
+  \item Physical obstructions: Temporary block of the \ac{LOS} can happen when objects, such as birds or debris, pass through the beam path,
+  \item Scattering: Light signal can scatter when passes through water droplets. Fog, in particular, is the most significant limiting factor for transmission \cite{khandakar2018experimental},
+  \item Atmospheric turbulence: Temperature changes in the air create pockets with different refractive indices. Passing through these regions can cause the beam to change it direction,
+  \item Atmospheric attenuation: Signal power is reduced over distance over a constant 0.225dBm/km \cite{abd2013effect},
+  \item Physical misalignment: Temperature changes can cause thermal expansion or contraction in the mounting structures, leading to misalignment.
+\end{itemize}
+\section{SFP Modules and Digital Diagnostic Monitoring (DDM)}
+The \ac{SFP} modules are standard piece of equipment that can be bought at an affordable price. 
+These are compact transceivers that are used in telecommunications, which translates differential electrical signal into the modulated optical signal.
+
+Such modules inside are shown in the figure \ref{fig:sfp}. The main elements are Laser Diode transmitter optical sub-assembly (TOSA) - used for transmitting data, and the receiving part uses receiver optical sub-assembly (ROSA) with PIN diode and transimpedance amplifier. In bidirectional one channel SFP both of those elements are replaced with BOSA (Bi-Directional Optical Sub-Assembly), which is combination of both. In addition to those main optical elements, electrical elements are also included in the PCBA, an amplifier used to boost the power of the received signal, Laser Diode Driver which directly modulates the laser diode. On the other side of the PCB, that can't be seen on the following picture is Digital Diagnostic IC for DDM implementation.
+
+ \begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/sfp.png}
+  \caption[short]{Dual channel SFP, Source: \cite{linovision_2024_sfp}}
+  \label{fig:sfp}
 \end{figure}
 
-
-
-
-
-
-\section{Light Propagation and Environmental Factors}
-The creation and development of FSO systems require extensive knowledge about light propagation as well as awareness of environmental factors that affect the transmission.
-Few of the examples are described below\cite{malik2015free}:
-\begin{itemize}
-  \item  Physical obstruction can temporally block the \ac{LOS}. For example, a bird or a leaf might fly through the path.
-  \item Absorption is caused by the molecules of the water, that occurs in the atmosphere. 
-  Water dramatically decreases the power of light passing through it.
-  Especially fog is the most limiting factor.
-  \item Atmospheric turbulence might affect the beam, while passing through packets of air with different temperature, therefore, different refractive index.
-  \item Atmospheric attenuation is a general factor which is a collection of different aspects like environmental conditions, humidity, or amount of dust in the air.
-\end{itemize}
-
-\section{SFP Modules and Digital Diagnostic Monitoring (DDM)}
-The \ac{SFP} modules are standard peice of equipment that can be bought for affordable price. 
-These are compact transceivers that are used in telecommunications.
-SFP's plugged into a switch or a media converter convert electrical ethernet signal into modulated optical signal. 
-
 It is intended to be used in fiber cables that extend tens or even hundreds of kilometers.
-SFP modules have different type of connectors, like RJ45 for electrical, LC and SC for optical. 
+SFP modules have various type of connectors, like RJ45 for electrical, LC and SC for optical. 
 As written before, these modules are transceivers, allowing for full duplex communication. 
 It is realized by two physical optic channels or one optic channel using two different wavelengths (eg. 1550nm Rx/1330nm Tx).
 
 Typically SFP uses wavelengths of telecommunication windows, which are 1st window - 850nm, 2nd window - 1310nm and 3rd window 1550nm. 
-These wavelengths are great for fiber communication because of the low transmission loss in the fibers.
+These wavelengths are perfect for fiber communication because of the low transmission loss in the fibers \cite{agrawal2012fiber}.
 
-The SFP modules are implementing \ac{DDM}, which is management technology which allows users to monitor in real time a few transmission parameters.
+The SFP modules are equipped with \ac{DDM}, which is management technology that allows users to monitor in real time a few transmission parameters.
 Those parameters are: output optical power, received power, temperature, laser current, and transceiver supply voltage.
 
 The mentioned characteristics make an SFP modules a great candidate for the base element of the FSO transceiver.
-It drives the laser, handles the modulation, and also implement the receiving part.
+It drives the laser, handles the modulation, and also implement the receiving path.
 Different connectors and wavelenghts configurations allow for different designs of the transceiver. 
 DDM allows for real time data harvesting, which is essential for a tracking system.
 
@@ -288,8 +327,10 @@ DDM allows for real time data harvesting, which is essential for a tracking syst
 \section{Existing Beam Steering Techniques}
 FSO link during its existence might destabilize, which can lead to loss of received power, reduction of throughput, and in the worst case total loss of connection.
 To limit the impact of environmental factors that destroy the connection, providers of FSO links are implementing beam steering into their links.
-On top of that alignment of long range link, without any beam steering is a tedious task.
+On top of that alignment of long range link, without any beam steering is a tedious task, as it would require perfect alignment of two nodes.
+Typical application of FSO link environment conditions are changing, such transceivers are usually placed outdoors and are affected by changing thermal expansion of the materials and structures they are placed on \cite{ruadulescu2022thermal}. In such a case, the perfect kinematic mount, which is perfectly aligned, can change an angle a little bit which can lead to major shifts over the deployment distance.
 At first glance it seems to be unnecessary, because in lab conditions the link might work correctly, but the deployment of a long range link is a hard reality check.
+
 
 The easiest way to provide beam steering into the design is to create a mechanical structure capable of rotating the whole transceiver. 
 Using such mechanism can provide big coverage and it is a great solution when transceivers are placed on mobile platforms, for example UAV drone.
@@ -302,25 +343,27 @@ Lastly, the translation of optical element could be swapped with a tilt of the l
 
 \chapter{System Architecture and Hardware Design}
 % This covers the [ENGINEERING ASPECT] of your thesis. It details the physical things you built.
-This chapter will show and explain the engineering choices taken while building a FSO link, which this document is all about.
-It will start with a general overview of the transceivers and the system in which such devices are deployable.
- The mechanical and optical design will be shown and explained next.
-In the end, the electronic circuit design will be showcased.
+
+Developing an FSO link involves significant engineering challenges, requiring the precise integration of mechanical, optical, and electronic systems to ensure reliable, high-throughput transmission. This chapter details the overall architecture and mechanical solutions implemented in the designed devices.
+
+First, a general overview of the transceiver and the link is provided, including the selected components and the final system parameters. Next, the mechanical and optical designs of the device are presented, followed by a description of the controller's electronic circuitry. Finally, the chapter outlines the software architecture and explains the design choices.
+
 
 \section{Transceiver and Link Overview}
-The Transcievier architecture was carefully chosen to be realistic in completing in a given time frame and also to be competitive on the market.
+
+The architecture of the transceiver was carefully chosen to be realistic in completing in a given time frame and also competitive on the market.
 Another constraint was the affordability and availability of the elements on the market. The main elements of it are:
 \begin{itemize}
   \item gigabit SFP media converter,
-  \item full duplex, 1.25GB/s, 80km, WDM, SFP 1330/1550 (rx/tx or tx/rx depending on the unit) SM SC connector providing one optical path, with DDM,
+  \item full duplex, 1.25GB/s, 80km, WDM, SFP 1330/1550 (rx/tx or tx/rx depending on the unit) SM SC connector providing one optical path with DDM,
   \item 3d mechanical movement allowing for SFP translation,
   \item Nema 17 1.8 $\deg$ per step
-  \item plano convex lens 50mm diameter, 85mm focal length.
+  \item plano convex lens 50mm diameter, 85mm focal length,
   \item electical control system for driving the motors and tapping into SFP's DDM,
-  \item esp32c6, for low throughput RF transmission,
+  \item esp32c6 for low throughput RF transmission.
 \end{itemize}
 
-This list of elements gives competitive parameters to the FSO transceiver and keeps the cost relatively low. The \ac{BOM} with costs is presented in Appendix \ref{appendix:COST}. The final cost for once device with such elements is 550 PLN, which is 1100 PLN per link.
+This list of elements gives competitive parameters to the FSO transceiver and keeps the cost relatively low. The \ac{BOM} with costs is presented in Appendix \ref{appendix:COST}. The final cost for single device with such elements is 550 PLN, which is 1100 PLN per link capable of uninterrupted 1Gbs transmission at tens of meters.
 
 In figure \ref{fig2:diag}, the proposed system diagram is presented. There is a simplified block scheme of transceiver shown and the link itself.
 
@@ -334,16 +377,9 @@ In figure \ref{fig2:diag}, the proposed system diagram is presented. There is a 
 
 \section{Mechanical and Optical Design}
 %Details of the 3D-printed structure, lens positioning, and the integration of stepper motors for pan/tilt or lens shifting.
-The crucial part of the transceiver part is the optical and mechanical design. 
+The crucial part of the transceiver is the optical and mechanical design. 
 In this particular case it is embedded together and movement provided by mechanics changes the position of the light source to the lens.
- Changes the angle in which the transceiver exists in light, allowing beam steering as presented in \ref{fig3:Opt_exp}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{figures/Optics_explanation.jpg}
-    \caption[short]{Translation of light soruce against the lens}
-    \label{fig3:Opt_exp}
-\end{figure}
+It changes the angle in which the the light exists the transceiver, allowing beam steering.
 
 In case, when light source is placed in the focal length - the light beam will be collimated. 
 Approximately if we move it in parallel to the lens, the beam will be almost collimated and will exit the lens at the angle.
@@ -358,8 +394,8 @@ Due to this characteristic, this beam steering technique can work, allowing tran
 \end{figure}
 
 To achieve such beam steering, proper mechanical system has been created that allows for 3 axis movement of the SFP module.
-First axis, let's call it x is perpendicular to the lens and translation alongside this axis change the distance from SFP to the lens.
-Another two axes, y and z are parallel to the lens and the moving the source in those direction steers the beam, as shown in the figure \ref{fig5:axes}. 
+First axis, let's call it x is perpendicular to the lens and translation alongside this axis change the distance of SFP to the lens.
+Another two axes, y and z are parallel to the lens and moving the source in those direction steers the beam, as shown in the figure \ref{fig5:axes}. 
 
 \begin{figure}[H]
     \centering
@@ -371,12 +407,12 @@ Another two axes, y and z are parallel to the lens and the moving the source in 
 The mechanical structure allowing movements alongside those axes has been based on lead screws and anti-backlash nut's rotated by stepper motors.
 The used screw has 1mm pitch, which means that one full rotation of the screw will move the element by 1mm.
 Besides the lead screw, nuts and bearings, the rest of the mechanics was design for 3D printing.
-Although 3D printing does not give best results of the mechanical structure (Low stiffnes, thermal properties), it is great for rapid development and prototyping.
+Although 3D printing does not give best results of the mechanical structure (Low stiffnes, thermal properties and precision), it is great for rapid development and prototyping.
 
 The 3D printed structure also includes guides that the elements move on. 
 The shape of those guides on all axes was a trapezoidal shape, as can be seen in the figure \ref{fig5:guide_Rail}.
 On the figure \ref{fig5:guideHole} there is shown a hole which fits the guide rails. 
-There are circles placed in the corners to eliminate the jamming of the sharp corners.
+There are circles placed in the corners to eliminate the jamming of the sharp edges.
 \\
 \begin{figure}[H]
     \centering
@@ -413,7 +449,7 @@ In figure \ref{Fig7:tr0}, the frontal photography of the transceiver is shown. F
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{figures/rzut0.png}
+  \includegraphics[width=1\textwidth]{figures/rzut0.jpg}
   \caption[short]{Transceiver photo no.1}
   \label{Fig7:tr0}
 \end{figure}
@@ -425,13 +461,13 @@ By "1" the one of the Y axis end switches is placed, it is connected to the bear
 
 This photograph nicely showcased how nuts, marked as "2", are placed in the 3D printed structure - they are pushed into and sit in the place nicely, similar to the bearings marked as "3".
 
-On the right in the white box, marked as "4", the controller is placed with convenient placement of ESP32C6 dev module, allowing for good transmission.
+On the right in the white box, marked as "4", the controller is placed with convenient placement of ESP32C6 dev module, allowing for sufficient range of RF transmission \cite{pasic2021esp}.
 
 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{figures/rzut2.png}
+  \includegraphics[width=1\textwidth]{figures/rzut2.jpg}
   \caption[short]{Transceiver photo no.2}
   \label{Fig7:tr1}
 \end{figure}
@@ -442,7 +478,7 @@ In the figure \ref{Fig7:tr2} is a picture of the transceiver from the other side
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{figures/rzut1.png}
+  \includegraphics[width=1\textwidth]{figures/rzut1.jpg}
   \caption[short]{Transceiver photo no.3}
   \label{Fig7:tr2}
 \end{figure}
@@ -455,7 +491,7 @@ It also shows three stepper motors for the X, Y, and Z axes, labeled "2", "3", a
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{figures/rzut3.png}
+  \includegraphics[width=1\textwidth]{figures/rzut3.jpg}
   \caption[short]{Transceiver photo no.4}
   \label{Fig7:tr3}
 \end{figure}
@@ -465,10 +501,10 @@ It also shows three stepper motors for the X, Y, and Z axes, labeled "2", "3", a
 \newpage
 \section{Controller Design}
 %The hardware required to run the system. Include your microcontroller choice, motor drivers, power supply, and the physical interface designed to read data from the SFP module.
-A controller is a important part of the project, as it is running the whole transceiver. 
+A controller is an important part of the project, as it is running the whole transceiver. 
 It consists of couple elements connected by GPIO's or communication protocols.
 \begin{itemize}
-  \item the heart of the controller is the STM32F1 microcontroller,
+  \item the main MCU of the controller is the STM32F1 microcontroller,
   \item it's outputs are connected to the motor controllers A4988, which are configurated for 4 x microstepping,
   \item inputs are used to connect the end switches connected in series, so if any of the switches of the given axes are closed, then it goes to one pin,
   \item I2C bus is used to connect the microcontroller to the SFP module, to hijack out the DDM data,
@@ -518,7 +554,7 @@ Three concurrent tasks are run:
 \end{figure}
 
 
-\chapter{Active Alignment and Control Algorithm}
+\chapter{Active Control Algorithm}
 % This bridges your hardware and your [RESEARCH ASPECT]. It explains the "brain" of your system.
 This chapter explains how the built platform is controlled, starting from how data is collected and then how this information is used to set up the link and keep it running.
 \section{DDM Data Extraction}
@@ -530,7 +566,7 @@ SFP pinout is provided in the figure \ref{Fig10:sfp_pinout}. SDA is at pin 6 and
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.85\textwidth]{figures/pinout.png}
-  \caption[short]{Pinout of the sfp}
+  \caption[short]{Pinout of the sfp. Source: \cite{robofiber2013sfp}}
   \label{Fig10:sfp_pinout}
 \end{figure}
 
@@ -575,15 +611,16 @@ Having this information, it can be concluded that with this data rate, the trans
 
 \section{Connection Seeking Algorithm (Spiral Search)}
 
-After placing the transceivers so that they are aimed at each other, it is a task to make them shoot perfectly "straight".
+After placing the transceivers so that they are aimed at each other, it is demanding task to achieve perfect aligment.
  It is because of imperfections of the mechanical design, or even media converter itself, the SFP module can be a little bit rotated.
 It can be calibrated coarsely, but in the end a search algorithm had to be developed.
 
-The algorithm applied is the Square Spiral Search Pattern Method. Because the transceiver shoots almost straight, the direct neighborhood must be searched.
-The flow chart has been presented in the figure \ref{Fig11:Spiral search}. The algorithm is straightforward with an asynchronous stop condition. 
+The algorithm applied is the Square Spiral Search Pattern Method. 
+Due to high directivity and an imperfect homing sequence, the spatial search algorithm must be applied to connect both transceviers.
+The flow chart has been presented in the figure \ref{Fig11:Spiral search}. The algorithm has an asynchronous stop condition. 
 The lower the dx the denser the search. 
 That dependency allows for using the search in different scenarios,
- like in case the connection was lost dense version will be appropriate.
+like in case the connection was lost dense version will be appropriate.
 During link set up, rather coarse version is suggested, because the field of search is much bigger. 
 
 \begin{figure}[h!]
@@ -594,34 +631,42 @@ During link set up, rather coarse version is suggested, because the field of sea
 \end{figure}
 
 
-\section{Optimizing Algorithm}
+\section{Power aligment algorithm}
 After running a spiral search, the received power is at a low, nonoptimal power level.
 The purpose of Optimizing Algorithm is to find a maximum received power point, by controlling the Y/Z axes.
-In this moment the continuous connection isn't required, since it's still ran during link set up.
+In this moment the continuous connection isn't required, since it's still running during link set up.
 
-The proposed algorithm is a bounded linear search, the pseudo code is shown in the listing \ref{lst:linear search}.
-It sweeps three times to ensure that it approaches the hill from both sides and in case it starts going in wrong direction.
-The change direction condition is limited to the quater of current maxPow, to make the algorithm a bit faster.
+The proposed algorithm is a bounded linear search, the flow chart is shown in figure \ref{Fig11:linear search}.
+It sweeps three times to ensure that it approaches the peak from both sides and in case it starts going in wrong direction.
+The change direction condition is limited to the quater of current maxPow, to make the algorithm a than a full sweep.
 The 50 ms delay between moving and currentPow readout lets the mechanical vibrations settle to make the readout undistorted.
 Firstly, such an algorithm should be applied to one axis and then another \cite{arora2014two}.
-\\
-\begin{lstlisting}[caption={Bounded Linear Search}, label={lst:linear search}]
-  algorithm Bounded Linear Search is
-    currentPow := rxPow
-    maxPow := rxPow
-    dirChangeCount := 0
-    loop do
-        currentPow := rxPow
-        if currentPow >= maxPow  then
-          if dirChangeCount >= 3 then
-            return
-          maxPow := currentPow
-        else if currentPow < maxPow / 4 then
-          dir := !dir
-          dirChangeCount := dirChangeCount + 1
-        move further in dir
-        wait 50ms
-\end{lstlisting}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.65\textwidth]{figures/opt_diag1.png}
+  \caption[short]{Bounded Linear Search}
+  \label{Fig11:linear search}
+\end{figure}
+
+% \\
+% \begin{lstlisting}[caption={Bounded Linear Search}, label={lst:linear search}]
+%   algorithm Bounded Linear Search is
+%     currentPow := rxPow
+%     maxPow := rxPow
+%     dirChangeCount := 0
+%     loop do
+%         currentPow := rxPow
+%         if currentPow >= maxPow  then
+%           if dirChangeCount >= 3 then
+%             return
+%           maxPow := currentPow
+%         else if currentPow < maxPow / 4 then
+%           dir := !dir
+%           dirChangeCount := dirChangeCount + 1
+%         move further in dir
+%         wait 50ms
+% \end{lstlisting}
 
 
 \section{Control Algorithm Design}
@@ -633,26 +678,35 @@ As stated in DDM section, refresh rate of received power in DDM is rather slow, 
 On top of that the power curve is rather simple with one maximum,
 since it is the algorithm that is applied in Y and Z axes (parallel to the lens), 
 since X axis (perpendicular to the lens) should be already well align after link set up. 
-The Discrete Hill Climing Algorithm is presented in the form of a pseudo code \ref{lst:hill climb}. 
-This procedure differentiates from the previous algorithm by the execution time, since it does not scan broad range, rather observe how values changes in real time.
+The Control Algorithm is presented in the form of a flow chart in figure \ref{Fig11:hill climb}. 
+This procedure differentiates from the previous algorithm by the execution time, since it does not scan broad range, rather observe how values changes in real time. It guarantees that final state is just a step away from maximum power.
 This algorithm should first be applied to one axis and then to another \cite{chinnasamy2022review}.
-\newpage
-\begin{lstlisting}[caption={Hill Climbing algorithm}, label={lst:hill climb}]
-  algorithm Discrete Space Hill Climbing is
-    currentPow := rxPow
-    dir := 0
-    dirChangeCount := 0
-    previousPow := 0
-    loop do
-        currentPow := rxPow
-        if currentPow < previousPow then
-          if dirChangeCount = 2 then
-            return
-          dir := !dir
-          dirChangeCount := dirChangeCount + 1
-        previousPow := currentPow
-        move further in dir
-\end{lstlisting}
+
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.60\textwidth]{figures/ac_diag.png}
+  \caption[short]{Control algorithm flow chart}
+  \label{Fig11:hill climb}
+\end{figure}
+
+% \begin{lstlisting}[caption={Hill Climbing algorithm}, label={lst:hill climb}]
+%   algorithm Discrete Space Hill Climbing is
+%     currentPow := rxPow
+%     dir := 0
+%     dirChangeCount := 0
+%     previousPow := 0
+%     loop do
+%         currentPow := rxPow
+%         if currentPow < previousPow then
+%           if dirChangeCount = 2 then
+%             return
+%           dir := !dir
+%           dirChangeCount := dirChangeCount + 1
+%         previousPow := currentPow
+%         move further in dir
+% \end{lstlisting}
 
 
 
@@ -677,7 +731,6 @@ To make it convenient, RF communication was introduced into the design.
 
 
 The basic handshake is introduced, as can be seen in \ref{Fig12:Exec_flow}.
-\newpage
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.6\textwidth]{figures/Execution_diagram.png}
@@ -686,14 +739,15 @@ The basic handshake is introduced, as can be seen in \ref{Fig12:Exec_flow}.
 \end{figure}
 
 Such a sequence should guaranty good execution of hill climb algorithms in both transceivers of a link.
-The order that transceiver initializing the compensation dispatches Hill Climing Algorithm on second transceiver first 
+The order is that the transceiver initializing the compensation dispatches Control Algorithm on the second transceiver first 
 ensures that no algorithm will be run when there is no working connection.
 
 
-\chapter{Experimental Methodology}
+\chapter{Experimental Setup and Measurements}
 % Since this is an [EXPERIMENTAL] thesis, you need to explain exactly how you tested the system.
 In this chapter, experimental methodology will be explained. 
 The setup of the test, scenarios in which link will be placed, and measurement metrics. 
+Next, the measurements will be shown with proper analysis.
 
 \section{Experimental Setup}
 %The physical testing environment (indoor bench tests vs. outdoor free-space tests), distance of the link, and equipment used.
@@ -730,14 +784,38 @@ In figure \ref{fig:pair}, a pair of transceivers are shown, These devices were u
 \section{Test Scenarios and Measurement metrics}
 %How you deliberately introduced misalignment to test the system (simulating thermal expansion, vibrating the mount, shifting the receiver).
 The test scenarios were dictated by the weather conditions in this example. 
-The conditions on the test day were variable, constantly changing, varying from clear to runny and windy.
-The effects of the conditions are presented in the next chapter.
+The conditions on the test day were consistent with weather conditions change, varying from clear to runny and windy.
+
 
 %What defines "success" for your project? (e.g., Bit Error Rate (BER), packet loss, alignment recovery time, optical power stability).
-The only measurement metric that was collected during the tests was received power.
+The measurement metric that was collected during the tests was received power.
 It was collected by the Raspberry Pi4 computer connected to one of the devices. The other end measurement was provided by RF interface ESPNOW.
-\chapter{Results and Analysis}
-% This is where you present your findings from the [RESEARCH ASPECT].
+
+
+
+
+\section{Link throughput measurement}
+In addition to measurements of compensation performance and weather influence, empiric tests were conducted on link bitrate in dependence to the power received.
+
+It was carried out in an indoor environment, in a range of 10 meters and bitrate was tested with iperf3, which is a tool for active measurements of the maximum bandwidth on IP networks \cite{iperf_website}.
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\makecell{Received \\ Power [$\mu$W]} & \makecell{Download \\ bitrate [Mb/s]} & \makecell{Upload \\ bitrate [Mb/s]} & Retransmissions \\ 
+\midrule
+20  & 948 & 958 & 40  \\ 
+10  & 949 & 956 & 32  \\ 
+2   & 949 & 957 & 41  \\ 
+1.5 & 929 & 937 & 617 \\ 
+1.3 & 447 & 454 & 85  \\ 
+\bottomrule
+\end{tabular}
+\caption{Download and upload bitrate in relation to received power}
+\label{tab:throughput}
+\end{table}
 
 \section{Baseline Performance}
 %How the link performs statically without the active alignment control turned on.
@@ -746,33 +824,42 @@ Such measurements have been collected and are presented below in the figure \ref
 The blue line is a measurement from the master transceiver which is the one with Raspberry PI4 connected.
 The orange line represents the received power of the second transceiver.
 
-The results tend to slowly fall down in this case. The ripples after 800 seconds of running are caused by heavy rain.
-
-Over 1000 seconds of running, received power decreased by almost 200uW, from 430uW in the case of Master transceiver. 
-The slave starting performance was at 200uW and did not fall down as dramatically as the master performance. 
-
+In this test weather conditions were okay, without significant temperature change.
+The results tend to slowly fall down in this case. Over 600 seconds of running, received power decreased by almost 50uW, from 430uW in the case of Master transceiver. 
+The slave starting performance was at 200uW and fall by ~30uW.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(1).png}
-  \caption[short]{Measurement without active compensation}
+  \includegraphics[width=1\textwidth]{figures/noac_plot.png}
+  \caption[short]{Measurement without active compensation in good conditions}
   \label{fig:cgi1}
 \end{figure} 
 
 \newpage
+In another scenario, shown in the figure \ref{fig:noac2} without active compensation, the conditions had more influence on the results.
+In this case starting power measurements were 156uW for master and 35uW for a slave. 
+During the test the laser beam must have drifted a bit due to environmental factors, lowering the power from peak point on master transceiver to 65uW which is a significant drop.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/noac_plot2.png}
+    \caption{Measurement without active compensation with power drift}
+    \label{fig:noac2}
+\end{figure}
+
 \section{Active Compensation Algorithm Performance}
 %Graphs and data showing the system actively correcting itself when perturbed. Inclsude response timess and accuracy.
 To compare with baseline performance, active compensation performance was also measured.
 In figure \ref{fig:cg2}, the performance of both Master and Slave transceivers is visible.
 The blue line is a measurement from the Master transceiver, where the orange line is the slave. 
-In this plot there are red vertical lines that indicate AC INIT event, which is the initialization of the active compensation sequence.
+In this plot there are red vertical lines that indicate AC INIT event, which is the initialization of the active compensation sequence. After the sequence point of the new P\_max is marked, which is used to dispatch new compensation events if the power drops below $80\% * P\_max$ or increases above $120\% * P\_max$.
 
 The factors that affected the transceiver were the weather conditions outside. 
 Overall, the output power was improved throughout the measurement, by finding new maximum output power. 
 Looking at the baseline performance, the active compensation works as intended and serves its purpose by not letting the link degrade.
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(2).png}
+  \includegraphics[width=1\textwidth]{figures/ac_plot.png}
   \caption[short]{Measurement with active compensation}
   \label{fig:cg2}
 \end{figure}
@@ -791,27 +878,29 @@ This case shows how dense amounts of droplets of water might even block the conn
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(4).png}
+  \includegraphics[width=1\textwidth]{figures/noac_rain_plot1.png}
   \caption[short]{Heavy rain effects on received power}
   \label{fig:cg4}
 \end{figure}
 
 \newpage
 
-There was another measurement on a rainy day. It is a 4000 second measurement starting from relativly low 50uW received power in Master and 30uW in Slave.
+There was another measurement on a rainy day. It is a 3700 second measurement starting from relativly low 50uW received power in Master and 30uW received power in Slave.
 The measurements in this time were affected by heavy rain and strong wind.
 The results show that Master received power changed from 50 to even above 200uW,
-and those results showcased moments, where received power dropped down to 0uW and at the end the link fully destabilize.
+and those results showcased moments, where received power dropped down to 0uW and at the end the link fully destabilized.
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{figures/Code_Generated_Image(3).png}
-  \caption[short]{Environment}
+  \includegraphics[width=1\textwidth]{figures/noac_rain_plot2.png}
+  \caption[short]{Highly changing environment with rain and wind}
   \label{fig:cg3}
 \end{figure}
 
 \newpage
 \section{Discussion}
 %An honest evaluation of your system's stability, limitations of the 3D-printed mechanics, and the speed bottleneck of polling DDM data.
+In the baseline performance, two cases were observed, conditions were received power stayed stable and one with significant drop of received power. Although power metrics stayed in reasonable range allowing for full throughput, in longer range links the drift could destabilize the link.
+
 The results of Active Compensation in comparison to baseline performance show positive results - the received power metric was controlled at kept at good level.
 There are some nuances that can be taken into account while improving the overall performance.
 Currently, the transceiver is optimizing the received power of itself, but refined verison would be optimizing the sum of both received powers.
@@ -827,15 +916,13 @@ This is also a pretty good base, which could be extended for more advanced appli
 This chapter will conclude the work described in this thesis and speculate about possible improvements to the device.
 \section{Summary of Achievements}
 %A review of the project, confirming whether you met the objectives outlined in Chapter 1.
-The project was carried out successfully, according to the objective of the thesis. 
-The design and produced transceiver in deed is capable of 1Gb high throughput transmission.
-Two of such transceivers were used to create a functional FSO link.
-It was created using widely available components and a 3D printed structure. 
-Active misalignment compensation is shown to work, improving alignment in a changing environment.
-The research was conducted; therefore, the impact of the outdoor environment with changing weather conditions was tested.
+The project was carried out successfully according to the objective of the thesis. 
+A stable and high throughput optical link was design and produced, capable of 1Gbs transmission over tens of meters.
+It was achieved by using readily available and standardized components.
+The prototype devices produced were used as a platform to analyze the influence of weather conditions on link quality.
+Also the performance of active control algorithm was evaulated.
 
-The result device came in as a complete structure, solving the issues that were to be solved.
-Each part, electical, firmware, mechanics and the optics are cooperating with each other in a intended way.
+The result device came in as a complete structure, solving the issues that were to be solved, each part, electical, firmware, mechanics and the optics are cooperating with each other in a intended way. It proves that using custom 3D printed mechanics with off the shelf components it is possible to create operational FSO communication link.
 
 \section{Future Work}
 %What could be improved in future iterations? (e.g., faster motors, different optics, machine learning for predictive tracking).
@@ -858,7 +945,7 @@ The last thing regarding the mechanics would be the sealed waterproof casing of 
 The last thing that would improve the device would be beacon light source, which would allow for link set up without human interaction. 
 Such light paired with couple photodiodes would make the setup faster but also would open the new possibilities of automatic link recovery in case of total link degradation.
 
-In the end, there are many small things that could be done differently or better, but those that were pointed out are the key things that would be next to improve to make this transceiver much greater device.
+In the end, it is a Proof of Concept device that is shown to fulfill the objectives. Previously mentioned improvements might be used to improve this device in real world applications.
 
 
 
