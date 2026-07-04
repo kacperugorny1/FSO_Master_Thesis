@@ -194,7 +194,7 @@ On the other hand there are also new solutions, that are dedicated for ground to
 %However, it also has some disadvantages, such as sensitivity to atmospheric conditions and the need for precise alignment.
 
 The fundamental requirement of a well functioning free space optical link is maintaining uninterrupted direct line of sight, between transmitter and receiver.
-RF systems, on the other hand, diverge and bounce the obstacles or even pass through them and still can reach the destination.
+RF systems, on the other hand, diverge and pass through obstacles and still can reach the destination.
 Ideally FSO systems, keep the transmitted beam collimated, which allows to achieve high power density and security of transmission at the expense of need for keeping precise alignment.
 In practical deployments, it is a challenging task because of environmental factors such as vibrations, thermal expansion, or atmospheric conditions.
 That is why modern FSO systems are required to actively compensate movements of laser beam and its position.
@@ -236,7 +236,7 @@ Today, FSO transmission is being developed in couple directions, but most exciti
 \section{Principles of FSO Communication}
 %How optical data links work and their general architecture.
 
-Generally, a FSO link is a set of two components: a transmitter and a receiver. 
+Generally, a FSO link is a set of two components: the transmitter and the receiver. 
 The transmitter sends data signals free space using modulated optical radiation. 
 It consists of radiating element, which is usually a laser diode, a laser modulator, and a set of optics responsible for creating a beam \cite{majumdar2014fundamentals}.
 
@@ -328,7 +328,7 @@ DDM allows for real time data harvesting, which is essential for a tracking syst
 FSO link during its existence might destabilize, which can lead to loss of received power, reduction of throughput, and in the worst case total loss of connection.
 To limit the impact of environmental factors that destroy the connection, providers of FSO links are implementing beam steering into their links.
 On top of that alignment of long range link, without any beam steering is a tedious task, as it would require perfect alignment of two nodes.
-Typical application of FSO link environment conditions are changing, such transceivers are usually placed outdoors and are affected by changing thermal expansion of the materials and structures they are placed on \cite{ruadulescu2022thermal}. In such a case, the perfect kinematic mount, which is perfectly aligned, can change an angle a little bit which can lead to major shifts over the deployment distance.
+Typical application of FSO link environment conditions are changing, such transceivers are usually placed outdoors and are affected by thermal expansion of the materials and structures they are placed on \cite{ruadulescu2022thermal}. In such a case, the stable kinematic mount, which is perfectly aligned, can change an angle a little bit which can lead to major shifts over the deployment distance.
 At first glance it seems to be unnecessary, because in lab conditions the link might work correctly, but the deployment of a long range link is a hard reality check.
 
 
@@ -799,6 +799,7 @@ In addition to measurements of compensation performance and weather influence, e
 
 It was carried out in an indoor environment, in a range of 10 meters and bitrate was tested with iperf3, which is a tool for active measurements of the maximum bandwidth on IP networks \cite{iperf_website}.
 
+In table \ref{tab:throughput} the collected data is presented. Full throughput is observed when the lowest received power of each SFP is greater than 1.0 $\mu$W. Below that value, the connection is completely lost.
 
 \begin{table}[h!]
 \centering
@@ -806,11 +807,25 @@ It was carried out in an indoor environment, in a range of 10 meters and bitrate
 \toprule
 \makecell{Received \\ Power [$\mu$W]} & \makecell{Download \\ bitrate [Mb/s]} & \makecell{Upload \\ bitrate [Mb/s]} & Retransmissions \\ 
 \midrule
-20  & 948 & 958 & 40  \\ 
-10  & 949 & 956 & 32  \\ 
-2   & 949 & 957 & 41  \\ 
+99.8  & 949 & 952 & 25  \\ 
+72.4  & 949 & 953 & 14  \\ 
+63.7  & 948 & 958 & 13  \\ 
+24.2  & 949 & 958 & 8  \\ 
+11.2  & 949 & 956 & 32  \\ 
+9.1 & 949 & 955 & 18  \\
+9.0 & 949 & 954 & 14  \\
+6.6 & 949 & 953 & 46  \\
+2.5 & 949 & 953 & 16  \\
+2.0  & 949 & 957 & 41  \\ 
+1.7 & 949 & 957 & 31  \\
 1.5 & 929 & 937 & 617 \\ 
-1.3 & 447 & 454 & 85  \\ 
+1.3 & 949 & 952 & 8   \\
+1.2 & 949 & 952 & 22  \\
+1.2 & 949 & 952 & 34   \\
+1.1 & 949 & 955 & 18  \\
+1.0 & 0   & 0   & -   \\
+0.9 & 0   & 0   & -   \\
+0.6 & 0   & 0   & -   \\
 \bottomrule
 \end{tabular}
 \caption{Download and upload bitrate in relation to received power}
@@ -825,8 +840,8 @@ The blue line is a measurement from the master transceiver which is the one with
 The orange line represents the received power of the second transceiver.
 
 In this test weather conditions were okay, without significant temperature change.
-The results tend to slowly fall down in this case. Over 600 seconds of running, received power decreased by almost 50uW, from 430uW in the case of Master transceiver. 
-The slave starting performance was at 200uW and fall by ~30uW.
+The results tend to slowly fall down in this case. Over 600 seconds of running, received power decreased by almost 50$\mu$W, from 430$\mu$W in the case of Master transceiver. 
+The slave starting performance was at 200$\mu$W and fall by ~30$\mu$W.
 
 \begin{figure}[h!]
   \centering
@@ -835,10 +850,9 @@ The slave starting performance was at 200uW and fall by ~30uW.
   \label{fig:cgi1}
 \end{figure} 
 
-\newpage
 In another scenario, shown in the figure \ref{fig:noac2} without active compensation, the conditions had more influence on the results.
-In this case starting power measurements were 156uW for master and 35uW for a slave. 
-During the test the laser beam must have drifted a bit due to environmental factors, lowering the power from peak point on master transceiver to 65uW which is a significant drop.
+In this case starting power measurements were 156$\mu$W for master and 35$\mu$W for a slave. 
+During the test the laser beam must have drifted a bit due to environmental factors, lowering the power from peak point on master transceiver to 65$\mu$W which is a significant drop.
 
 \begin{figure}[H]
     \centering
@@ -865,13 +879,41 @@ Looking at the baseline performance, the active compensation works as intended a
 \end{figure}
 
 
+The first measurement has confirmed that the active compensation is working properly, hence the longer test was taken.
+The following measurement shows uninterrupted over one hour functioning of the link. In figure \ref{fig:lm1}, the first 300 seconds of the experiment are shown. The connection at the beginning is at the 100 $\mu$W power level for each of the transceivers. Next after the first compensation sequence received power metric jumps up to 500$\mu$W for master, the slave stays at 100$\mu$W. 
+
+After some time a second compensation sequence is called, caused by the drift of power level of the master transceiver. The power levels jumps from approximately 420$\mu$W and 80$\mu$W, to 600$\mu$W and 200$\mu$W.  
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/1h_part1.png}
+  \caption[short]{First part of measurement}
+  \label{fig:lm1}
+\end{figure}
+
+The following 45 minutes are shown in the figure \ref{fig:lm2}. only one sequence was called and it was due to some vibrations that were not properly filtered out. After the sequence power levels don't change much staying at approximately 500$\mu$W and 180$\mu$W.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/1h_part2.png}
+  \caption[short]{Second part of measurement}
+  \label{fig:lm2}
+\end{figure}
+
+The last 20 minutes are shown in the figure \ref{fig:lm3}. The first sequence starts at ~3230 second mark and the  for master's power is increased to 530$\mu$W. Then the power metric drifts for the master up and for the slave down. Then another sequence is called boosting both power metrics. At the end the last sequence is called and the master received power exceeds 700$\mu$W. The measurement ends at 4300 seconds, which corresponds to 71 minutes of functioning link connection at full 1Gb/s throughput.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/1h_part3.png}
+  \caption[short]{Third part of measurement}
+  \label{fig:lm3}
+\end{figure}
 
 \section{Environmental Impact}
 As mentioned in the baseline performance case during the measurement, it was raining at the end. 
 In figure \ref{fig:cg4}, the last 300 seconds are presented, when heavy rain was affecting link quality.
 
-Throughout the measurement, there is strong variation visible at the moments of rain, even dropping the output power temporarily to 0uW,
-sometimes the beam was affected in the other way, spiking the received power of Master transceiver to 600uW.
+Throughout the measurement, there is strong variation visible at the moments of rain, even dropping the output power temporarily to 0$\mu$W,
+sometimes the beam was affected in the other way, spiking the received power of Master transceiver to 600$\mu$W.
 
 This case shows how dense amounts of droplets of water might even block the connection, cousining loss of packets, which decrease the throughput.
 
@@ -883,12 +925,11 @@ This case shows how dense amounts of droplets of water might even block the conn
   \label{fig:cg4}
 \end{figure}
 
-\newpage
 
-There was another measurement on a rainy day. It is a 3700 second measurement starting from relativly low 50uW received power in Master and 30uW received power in Slave.
+There was another measurement on a rainy day. It is a 3700 second measurement starting from relativly low 50$\mu$W received power in Master and 30$\mu$W received power in Slave.
 The measurements in this time were affected by heavy rain and strong wind.
-The results show that Master received power changed from 50 to even above 200uW,
-and those results showcased moments, where received power dropped down to 0uW and at the end the link fully destabilized.
+The results show that Master received power changed from 50 to even above 200$\mu$W,
+and those results showcased moments, where received power dropped down to 0$\mu$W and at the end the link fully destabilized.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=1\textwidth]{figures/noac_rain_plot2.png}
@@ -902,6 +943,8 @@ and those results showcased moments, where received power dropped down to 0uW an
 In the baseline performance, two cases were observed, conditions were received power stayed stable and one with significant drop of received power. Although power metrics stayed in reasonable range allowing for full throughput, in longer range links the drift could destabilize the link.
 
 The results of Active Compensation in comparison to baseline performance show positive results - the received power metric was controlled at kept at good level.
+Long term tests of active compensation shows that it works properly, improving the link for over a hour.
+
 There are some nuances that can be taken into account while improving the overall performance.
 Currently, the transceiver is optimizing the received power of itself, but refined verison would be optimizing the sum of both received powers.
 The biggest bottleneck of the system is the DDM polling data frequency, 15ms makes a transceiver appropriate for not moving applications.
@@ -909,20 +952,23 @@ If there was an intention to apply this communication in drone communication to 
 Also, such application would require a much higher range of motion. The current mechanics could be a nice base for "fine" steering in such a system, where "coarse" steering would be a rotation of the base of transceiver.
 
 Overall, the 3D printed mechanics and the steppers motors give nice stability for "last mile" applications, allowing for high throughput secure connections where it is impossible or too expensive to lay fiber. 
-This is also a pretty good base, which could be extended for more advanced application, which would run real time tracking, but that would require to swap current SFP module for custom electronics, allowing for faster data harvest.
+This is also a pretty good base, which could be extended for more advanced application, which would run real time tracking, but that would require to swap current SFP module for custom electronics, allowing for faster data acquisition.
 
 
 \chapter{Conclusion and Future Work}
-This chapter will conclude the work described in this thesis and speculate about possible improvements to the device.
+
+This thesis has documented the complete development cycle of the FSO link. Starting with a brief introduction to the problem and theoretical background, the issue has been presented. Furthermore, it has gone through the choice of components, design and architecture of 3D printed mechanics, optics, and the electronic system. Then the design of software has been presented, starting from the general scheme, followed by a~detailed algorithm walkthrough. In the end, experiments were carried out, starting with the throughput examination, which has found the received power cut off level of the SFP module. Next, the baseline performance measurements of the link has been collected, to compare it to the results of tests with active beam compensation turned on, that have proven that implemented algorithms are capable of keeping the connection robust, by running the link for a significant amount of time. At the end of the measurements, the effects of environmental factors were measured.
+
+
 \section{Summary of Achievements}
 %A review of the project, confirming whether you met the objectives outlined in Chapter 1.
 The project was carried out successfully according to the objective of the thesis. 
 A~stable and high throughput optical link was design and produced, capable of 1Gbs transmission over tens of meters.
-It was achieved by using readily available and standardized components.
-The prototype devices produced were used as a platform to analyze the influence of weather conditions on link quality.
-Also the performance of active control algorithm was evaulated.
+It was achieved by the usage of widely available and standard components with custom 3D printed mechanics.
+Manufactured prototype devices were used as a platform to analyze the influence of weather conditions on link quality.
+Also, the performance of active control algorithm was evaulated, showing the capabilities of keeping the link stable.
 
-The result device came in as a complete structure, solving the issues that were to be solved, each part, electical, firmware, mechanics and the optics are cooperating with each other in a intended way. It proves that using custom 3D printed mechanics with off the shelf components it is possible to create operational FSO communication link.
+The result device came in as a complete structure, solving the issues that were to be solved, each part, electrical, firmware, mechanics, and the optics are cooperating with each other in an intended way. It proves that using custom 3D printed mechanics with off the shelf components it is possible to create an operational FSO communication link.
 
 \section{Future Work}
 %What could be improved in future iterations? (e.g., faster motors, different optics, machine learning for predictive tracking).
@@ -930,17 +976,20 @@ The result device came in as a complete structure, solving the issues that were 
 The FSO transceiver and the link are tasks that can be performed in various ways, depending on the needed application.
 The transceiver described by this document aims to be applied in "Last mile" scenarios.
 
-In such a use case used components, such as SFP modules, are sufficient to connecting two buildings together. 
+In such a use case used components, such as SFP modules, are sufficient to connect two buildings together. 
 Although the low data refresh in DDM technology bottlenecks the possibilities of compensating different environmental factors.
-With current application the link is capable of reducing the slow paced changes, like thermal expansion of the buildings and the device itself.
+With current application the link is capable of reducing the slow drift of position, like thermal expansion of the buildings and the device itself.
 In higher distances this might start to be an issue where those fast paced vibrations or wind swings might lead to big packet losses.
-So the first improvement to make such transceiver greater, would be obtaining its own circuit of receiver and transmitter, which would allow for faster readouts of received power.
+So the first improvement to make such transceiver greater, would be the development of custom circuit of receiver and transmitter, which would allow for faster readouts of received power.
 
-Another thing that could be upgraded are mechanics; more precisely, the 3d printed guides would be changed with proper precise guide rail, which would eliminate the loose movements and decrease the friction.
-Current movements of the transceiver are also far too long in tens of centimeters, limited to one centimeter range by the end switches. 
+Another thing that could be improved are mechanics; more precisely, the 3d printed guides would be changed with proper precise guide rail, which would eliminate the loose movements and decrease the friction.
+
+Current movements of the transceiver are far too long in tens of centimeters, limited to one centimeter range by the end switches. 
 Limiting it by design will reduce the amount of materials used in production, including filament and lead screw. 
-The production time would also be reduced by shorter 3D print times. 
-The last thing regarding the mechanics would be the sealed waterproof casing of the transceiver, which would allow for proper application.
+The manufacture time would also be reduced by shorter 3D print times.
+
+
+The last thing regarding the mechanics would be the sealed waterproof casing of the transceiver, which would provide protection from environmental conditions
 
 The last thing that would improve the device would be beacon light source, which would allow for link set up without human interaction. 
 Such light paired with couple photodiodes would make the setup faster but also would open the new possibilities of automatic link recovery in case of total link degradation.
